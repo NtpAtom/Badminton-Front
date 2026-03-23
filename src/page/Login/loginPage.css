@@ -1,0 +1,114 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fafafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.login-card {
+  background: #ffffff;
+  padding: 48px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f0f0f0;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 32px 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-left: 2px;
+}
+
+.password-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.forgot-password-link {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-right: 2px;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+.forgot-password-link:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}
+
+.login-form .MuiOutlinedInput-root {
+  border-radius: 10px;
+  background-color: #f8fafc;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.login-form .MuiOutlinedInput-root:hover {
+  background-color: #ffffff;
+}
+
+.login-form .MuiOutlinedInput-notchedOutline {
+  border-color: #e2e8f0;
+}
+
+.login-submit-btn {
+  margin-top: 14px !important;
+  padding: 12px 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  text-transform: none !important;
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.login-submit-btn:hover {
+  background-color: #1e293b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2) !important;
+}
