@@ -39,7 +39,7 @@ export default function UserLayout() {
   const location = useLocation(); // เช็คว่าปัจจุบันอยู่หน้าไหน (URL)
 
   // 3. ดึงข้อมูล User ตอนล็อกอินมาจาก Zustand Store ของเรา
-  const user = useLogin((state) => state.user) || { firstName: "User" };
+  const user = useLogin((state) => state.user) || { user_name: "User" };
   const logout = useLogin((state) => state.logout);
 
   // === ฟังก์ชันการทำงานต่างๆ ===
@@ -98,12 +98,12 @@ export default function UserLayout() {
           {/* ส่วนข้อมูลบัญชีผู้ใช้ (ชื่อ + รูปโปรไฟล์) */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Typography sx={{ fontWeight: "bold" }}>
-              {user.firstName}
+              {user.user_name}
             </Typography>
 
             <IconButton onClick={handleOpenProfileMenu} sx={{ p: 0 }}>
               <Avatar sx={{ bgcolor: "#111" }}>
-                {user.firstName !== "User" ? user.firstName[0] : "U"}{" "}
+                {user.user_name && user.user_name !== "User" ? user.user_name[0].toUpperCase() : "U"}{" "}
                 {/* โชว์ตัวพิมพ์ตัวแรกของชื่อ ถ้าไม่มีให้ขึ้น U */}
               </Avatar>
             </IconButton>

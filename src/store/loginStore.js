@@ -5,9 +5,10 @@ import { persist } from "zustand/middleware"
 export const useLogin = create(persist((set) => ({
     user: null,
     token: null,
-    login: (user, token) => ({
+    login: (token, user) => set({
         user,
-        token
+        token,
+
     }),
     logout: () => set({ user: null, token: null }),
 
