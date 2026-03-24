@@ -1,6 +1,7 @@
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./page/Login/loginPage";
+import RegisterPage from "./page/Register/registerPage";
 import UserLayout from "./layouts/UserLayout";
 import BookingPage from "./page/user/booking/bookingPage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -10,6 +11,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
 
       <Route

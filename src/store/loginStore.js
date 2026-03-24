@@ -1,5 +1,4 @@
 import { create } from "zustand";
-
 import { persist } from "zustand/middleware"
 
 export const useLogin = create(persist((set) => ({
@@ -14,5 +13,4 @@ export const useLogin = create(persist((set) => ({
 
 }), {
     name: "login",
-    storage: localStorage
 }))

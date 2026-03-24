@@ -1,24 +1,41 @@
 import React, { useState } from "react";
 import { Input, Button } from "../../components";
 import "./loginPage.css";
-import { useNavigate } from "react-router-dom"; // ใช้ redirect ไปหน้าอื่น
+import { useNavigate, Link } from "react-router-dom"; // ใช้ redirect ไปหน้าอื่น
 import { useLogin } from "../../store/loginStore";
 import axios from "axios";
+import { InputAdornment, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 
 function LoginPage() {
   const navigate = useNavigate();
   const setLogin = useLogin((state) => state.login);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    user_email: "",
+    user_password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
   const hdlLogin = async (e) => {
     e.preventDefault();
     setError(""); // Reset error before new attempt
+    const { user_email, user_password } = formData;
 
-    if (!email || !password) {
+    if (!user_email || !user_password) {
       setError("กรุณากรอกอีเมลและรหัสผ่าน");
       return;
     }
@@ -26,7 +43,7 @@ function LoginPage() {
     setLoading(true);
     try {
       const API_URL = 'http://localhost:3000/api/user/login';
-      const res = await axios.post(API_URL, { user_email: email, user_password: password });
+      const res = await axios.post(API_URL, { user_email, user_password });
       setTimeout(() => {
         setLogin(res.data.token, res.data.user);
         setLoading(false);
@@ -61,30 +78,48 @@ function LoginPage() {
 
         <form className="login-form" onSubmit={hdlLogin}>
           <div className="input-group">
-            <label htmlFor="email">email</label>
+            <label htmlFor="user_email">email</label>
             <Input
-              id="email"
+              id="user_email"
               placeholder="Enter your email"
               margin="none"
               autoComplete="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.user_email}
+              onChange={handleChange}
             />
           </div>
 
           <div className="input-group">
             <div className="password-header">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="user_password">Password</label>
             </div>
             <Input
-              id="password"
-              type="password"
+              id="user_password"
+              type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               margin="none"
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.user_password}
+              onChange={handleChange}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                        size="small"
+                        sx={{ mr: 0.5 }}
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
             <a href="#" className="forgot-password-link">
               ลืมรหัสผ่าน?
@@ -100,6 +135,10 @@ function LoginPage() {
           <Button type="submit" className="login-submit-btn" disableElevation loading={loading}>
             Sign In
           </Button>
+
+          <p className="register-link-text">
+            Don't have an account? <Link to="/register" className="register-link">Create Account</Link>
+          </p>
         </form>
       </div>
     </div>
