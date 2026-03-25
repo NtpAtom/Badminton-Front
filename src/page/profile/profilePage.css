@@ -1,0 +1,220 @@
+/* profilePage.css */
+.profile-container {
+    min-height: calc(100vh - 64px);
+    /* Subtracting navbar height if any */
+    background-color: #f0f7ff;
+    padding: 2rem;
+    font-family: 'Inter', 'Prompt', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-content {
+    max-width: 1000px;
+    width: 100%;
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.profile-header p {
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 960px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sidebar Card */
+.sidebar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
+    height: 385px;
+}
+
+.avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #00b4d8, #00a896);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Using a simple circular avatar with gradient if no image */
+.avatar-gradient {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00a896, #02c39a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.username-display {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.stats-divider {
+    width: 100%;
+    height: 1px;
+    background-color: #eef2f6;
+    margin-bottom: 2rem;
+}
+
+.stats-list {
+    width: 100%;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+}
+
+.stat-label {
+    color: #666;
+}
+
+.stat-value {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Form Cards */
+.form-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.form-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #888;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background-color: #f1f8fc;
+    font-size: 0.95rem;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.custom-input::placeholder {
+    color: #aaa;
+}
+
+.custom-input:focus {
+    outline: none;
+    border-color: #0b8fa9;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(11, 143, 169, 0.1);
+}
+
+/* Buttons */
+.save-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 10px;
+    background-color: #0b8fa9;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.save-button:hover {
+    background-color: #09758b;
+}
+
+.password-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #c9e6ff;
+    border-radius: 10px;
+    background-color: #f1f8fc;
+    color: #0b8fa9;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.password-button:hover {
+    background-color: #e3f2fd;
+}

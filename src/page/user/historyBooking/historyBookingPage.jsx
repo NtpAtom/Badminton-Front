@@ -49,12 +49,12 @@ function historyBookingPage() {
             const data = res.data.data;
             const count = res.data.total || 0;
 
-            // หน่วงเวลา 0.5 วินาทีเพื่อให้ Animation ของ Loading แสดงผลได้สมบูรณ์ก่อนเปลี่ยนข้อมูล
+            // Wait until the transition backdrop is fully up before showing data
             setTimeout(() => {
                 setRows(data);
                 setDisplayRows(data);
                 setTotalCount(count);
-                setIsLoading(false); // ปิดตัวโหลด
+                setIsLoading(false);
             }, 500);
         } catch (error) {
             console.log(error);
@@ -77,7 +77,7 @@ function historyBookingPage() {
     const handleClearAndFetch = () => {
         setStartDate('');
         setEndDate('');
-        // ตามคำขอผู้ใช้: ไม่ต้องล้าง pagination (page) เมื่อกดล้างค่า
+        // User requested NOT to clear pagination (page) when clearing filters
 
         const fetchCleared = async () => {
             setIsLoading(true)
@@ -85,7 +85,7 @@ function historyBookingPage() {
                 const res = await axios.get("http://localhost:3000/api/booking", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: {
-                        page: page + 1,
+                        page: page + 1, // Use current page instead of forcing page 1
                         pageSize: rowsPerPage
                     }
                 });
@@ -114,7 +114,7 @@ function historyBookingPage() {
     // ฟังก์ชันจัดการเมื่อผู้ใช้เปลี่ยนจำนวนแถวที่ต้องการแสดงต่อหน้า
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); // เมื่อเปลี่ยนจำนวนแถวมักจะต้องการกลับไปเริ่มหน้าแรก
+        setPage(0);
     };
 
     return (
@@ -123,12 +123,12 @@ function historyBookingPage() {
             p: { xs: 1, md: 0 },
             maxWidth: 'lg',
             mx: 'auto',
-            height: { md: 'calc(100vh - 120px)', xs: 'auto' }, // กำหนดความสูงคงที่บน Desktop เพื่อให้ตารางเลื่อนได้ในตัว
+            height: { md: 'calc(100vh - 120px)', xs: 'auto' }, // Fix height on desktop to enable internal scroll
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden' // ป้องกันการเลื่อนทั้งหน้าจอ
+            overflow: 'hidden' // Prevent whole page scroll on desktop
         }}>
-            {/* --- ส่วนแถบค้นหา (Search Bar) --- */}
+            {/* Minimal & Compact Search Bar */}
             <Box sx={{ flexShrink: 0 }}>
                 <Paper
                     elevation={0}
@@ -150,7 +150,6 @@ function historyBookingPage() {
                         alignItems: { xs: 'stretch', md: 'flex-end' },
                         gap: 2
                     }}>
-                        {/* ช่องเลือก "จากวันที่" */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, flex: 1 }}>
                             <Typography variant="caption" sx={{ fontWeight: 600, color: '#999', ml: 0.5 }}>จากวันที่</Typography>
                             <TextField
@@ -162,7 +161,6 @@ function historyBookingPage() {
                                 sx={{ '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fcfcfc' } }}
                             />
                         </Box>
-                        {/* ช่องเลือก "ถึงวันที่" */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, flex: 1 }}>
                             <Typography variant="caption" sx={{ fontWeight: 600, color: '#999', ml: 0.5 }}>ถึงวันที่</Typography>
                             <TextField
@@ -174,7 +172,6 @@ function historyBookingPage() {
                                 sx={{ '& .MuiInputBase-root': { borderRadius: '8px', backgroundColor: '#fcfcfc' } }}
                             />
                         </Box>
-                        {/* กลุ่มปุ่มกด ค้นหา และ ล้างค่า */}
                         <Stack
                             direction="row"
                             spacing={1}
@@ -225,7 +222,7 @@ function historyBookingPage() {
                 <Paper
                     elevation={0}
                     sx={{
-                        flex: 1, // ยึดพื้นที่ที่เหลือทั้งหมด
+                        flex: 1,
                         display: 'flex',
                         flexDirection: 'column',
                         minHeight: 0,
@@ -235,12 +232,10 @@ function historyBookingPage() {
                         border: '1px solid #f0f0f0'
                     }}
                 >
-                    {/* Container ของตารางที่รองรับการเลื่อนทั้งแนวตั้ง (Y) และแนวขอน (X) */}
                     <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
                         <Table sx={{ minWidth: 850 }} aria-label="premium booking table" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    {/* หัวตารางพร้อมสีพื้นหลังแบบ Gradient และการตรึงไว้ (Sticky) */}
                                     <TableCell sx={{ background: 'linear-gradient(90deg, #1976d2 0%, #1565c0 100%)', color: 'white', fontWeight: 700, py: 2, whiteSpace: 'nowrap', zIndex: 10 }}>No.</TableCell>
                                     <TableCell sx={{ background: '#1565c0', color: 'white', fontWeight: 700, whiteSpace: 'nowrap', zIndex: 10 }}>สาขา (Branch)</TableCell>
                                     <TableCell sx={{ background: '#1565c0', color: 'white', fontWeight: 700, whiteSpace: 'nowrap', zIndex: 10 }}>สนาม (Court)</TableCell>
@@ -270,7 +265,6 @@ function historyBookingPage() {
                                         <TableCell align="right">{row.duration_hours}</TableCell>
                                         <TableCell align="right" sx={{ fontWeight: 700, color: '#333', whiteSpace: 'nowrap' }}>{row.total_price} บาท</TableCell>
                                         <TableCell align="right">
-                                            {/* Badge แสดงสถานะแบบแคปซูล */}
                                             <Box sx={{
                                                 display: 'inline-flex',
                                                 px: 1.5,

@@ -9,6 +9,9 @@ export const useLogin = create(persist((set) => ({
         token,
 
     }),
+    updateUser: (newUser) => set((state) => ({ 
+        user: { ...state.user, ...newUser } 
+    })),
     logout: () => set({ user: null, token: null }),
 
 }), {

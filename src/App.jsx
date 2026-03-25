@@ -7,6 +7,7 @@ import BookingPage from "./page/user/booking/bookingPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HistoryBookingPage from "./page/user/historyBooking/historyBookingPage";
 import Loading from "./components/Loading";
+import ProfilePage from "./page/profile/profilePage";
 
 function App() {
   return (
@@ -38,11 +39,7 @@ function App() {
 
         <Route path="my-bookings" element={<HistoryBookingPage />} />
 
-        <Route path="profile" element={
-          <div style={{ padding: '20px' }}>
-            <h1>Profile Settings</h1><p>Edit your profile details here.</p>
-          </div>
-        } />
+        <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
     </>
