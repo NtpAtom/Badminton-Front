@@ -5,9 +5,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
+import { useLoading } from "../../store/loadingStore";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { setIsLoading, isLoading } = useLoading();
   const [formData, setFormData] = useState({
     user_name: "",
     user_email: "",
@@ -15,7 +17,6 @@ function RegisterPage() {
     user_password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
@@ -43,23 +44,19 @@ function RegisterPage() {
       return setError("รหัสผ่านไม่ตรงกัน");
     }
 
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const API_URL = "http://localhost:3000/api/user/register"
       await axios.post(API_URL, formData)
-      setTimeout(() => {
-        setLoading(false);
-        navigate('/login');
-      }, 800);
+      setIsLoading(false);
+      navigate('/login');
 
     } catch (error) {
-      setTimeout(() => {
-        console.log(error);
-        const msg = error.response?.data?.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก";
-        setError(msg);
-        setLoading(false);
-      }, 800);
+      console.log(error);
+      const msg = error.response?.data?.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก";
+      setError(msg);
+      setIsLoading(false);
     }
   };
 
@@ -164,7 +161,7 @@ function RegisterPage() {
 
           {error && <div className="error-message">{error}</div>}
 
-          <Button type="submit" className="register-submit-btn" disableElevation loading={loading}>
+          <Button type="submit" className="register-submit-btn" disableElevation loading={isLoading}>
             Create Account
           </Button>
 

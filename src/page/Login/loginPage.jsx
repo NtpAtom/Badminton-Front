@@ -3,6 +3,7 @@ import { Input, Button } from "../../components";
 import "./loginPage.css";
 import { useNavigate, Link } from "react-router-dom"; // ใช้ redirect ไปหน้าอื่น
 import { useLogin } from "../../store/loginStore";
+import { useLoading } from "../../store/loadingStore";
 import axios from "axios";
 import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -11,11 +12,11 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 function LoginPage() {
   const navigate = useNavigate();
   const setLogin = useLogin((state) => state.login);
+  const { setIsLoading, isLoading } = useLoading();
   const [formData, setFormData] = useState({
     user_email: "",
     user_password: "",
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,33 +41,27 @@ function LoginPage() {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       const API_URL = 'http://localhost:3000/api/user/login';
       const res = await axios.post(API_URL, { user_email, user_password });
-      setTimeout(() => {
-        setLogin(res.data.token, res.data.user);
-        setLoading(false);
-        navigate('/user/booking');
-      }, 800);
+      setLogin(res.data.token, res.data.user);
+      setIsLoading(false);
+      navigate('/user/booking');
     } catch (err) {
-      setTimeout(() => {
+      console.log(err);
+      const msg = err.response?.data?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
 
+      // แปลข้อความเป็นภาษาไทยเพื่อให้ผู้ใช้เข้าใจง่าย
+      if (msg.includes("User not Found")) {
+        setError("ไม่พบอีเมลนี้ในระบบ");
+      } else if (msg.includes("password is not match")) {
+        setError("รหัสผ่านไม่ถูกต้อง");
+      } else {
+        setError(msg);
+      }
 
-        console.log(err);
-        const msg = err.response?.data?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
-
-        // แปลข้อความเป็นภาษาไทยเพื่อให้ผู้ใช้เข้าใจง่าย
-        if (msg.includes("User not Found")) {
-          setError("ไม่พบอีเมลนี้ในระบบ");
-        } else if (msg.includes("password is not match")) {
-          setError("รหัสผ่านไม่ถูกต้อง");
-        } else {
-          setError(msg);
-        }
-
-        setLoading(false);
-      }, 800);
+      setIsLoading(false);
     }
   };
 
@@ -132,7 +127,7 @@ function LoginPage() {
             </div>
           )}
 
-          <Button type="submit" className="login-submit-btn" disableElevation loading={loading}>
+          <Button type="submit" className="login-submit-btn" disableElevation loading={isLoading}>
             Sign In
           </Button>
 

@@ -5,10 +5,14 @@ import RegisterPage from "./page/Register/registerPage";
 import UserLayout from "./layouts/UserLayout";
 import BookingPage from "./page/user/booking/bookingPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import HistoryBookingPage from "./page/user/historyBooking/historyBookingPage";
+import Loading from "./components/Loading";
 
 function App() {
   return (
-    <Routes>
+    <>
+      <Loading />
+      <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -32,11 +36,7 @@ function App() {
 
         <Route path="booking" element={<BookingPage />} />
 
-        <Route path="my-bookings" element={
-          <div style={{ padding: '20px' }}>
-            <h1>รายการจองของฉัน</h1><p>Your upcoming bookings will appear here.</p>
-          </div>
-        } />
+        <Route path="my-bookings" element={<HistoryBookingPage />} />
 
         <Route path="profile" element={
           <div style={{ padding: '20px' }}>
@@ -45,6 +45,7 @@ function App() {
         } />
       </Route>
     </Routes>
+    </>
   );
 }
 

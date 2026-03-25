@@ -6,9 +6,11 @@ import Step3CourtList from "./components/Step3CourtList";
 import "./bookingPage.css";
 import axios from "axios";
 import { useLogin } from "../../../store/loginStore";
+import { useLoading } from "../../../store/loadingStore";
 
 export default function BookingPage() {
   const { user, token } = useLogin();
+  const { setIsLoading } = useLoading();
   const [branchId, setBranchId] = useState("");
   const [bookingDate, setBookingDate] = useState(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState("");
@@ -16,7 +18,6 @@ export default function BookingPage() {
   const [duration, setDuration] = useState(0);
   const [branches, setBranches] = useState([]);
   const [availableCourts, setAvailableCourts] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // Fetch branches on mount
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function BookingPage() {
   const fetchAvailableCourts = async () => {
     if (!branchId || !bookingDate || !startTime || !endTime) return;
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       const res = await axios.get("http://localhost:3000/api/court/available", {
         params: {
@@ -52,7 +53,7 @@ export default function BookingPage() {
     } catch (err) {
       console.error("Error fetching available courts:", err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -77,6 +78,7 @@ export default function BookingPage() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const res = await axios.post("http://localhost:3000/api/booking/add", {
         court_id: court.court_id,
@@ -96,6 +98,8 @@ export default function BookingPage() {
     } catch (error) {
       console.error("Error booking court:", error);
       alert(error.response?.data?.message || "เกิดข้อผิดพลาดในการจอง");
+    } finally {
+      setIsLoading(false);
     }
   }
 
