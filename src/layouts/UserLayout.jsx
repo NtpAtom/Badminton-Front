@@ -205,9 +205,9 @@ export default function UserLayout() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem disablePadding sx={{ mb: 1, mt: 50 }}>
+          <ListItem disablePadding sx={{ mb: 1, mt: 2 }}>
             <ListItemButton
-              onClick={() => navigate("/login")}
+              onClick={handleLogout}
               selected={location.pathname.includes("/login")}
               sx={{ borderRadius: "8px" }}
             >
