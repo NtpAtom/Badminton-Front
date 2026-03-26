@@ -225,14 +225,28 @@ export default function UserLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          // ทำอนิเมชั่นให้ค่อยๆยืด/หด เวลากดสลับเปิดปิด sidebar
+          height: { xs: "100vh", md: "auto" },
+          display: { xs: "flex", md: "block" },
+          flexDirection: "column",
+          overflow: { xs: "hidden", md: "visible" },
           transition: "margin 0.3s ease",
+          p: { xs: 2, md: 3 },
+          position: "relative",
         }}
       >
         <Toolbar /> {/* สร้างช่องว่างให้เนื้อหาไม่ชนแถบ Navbar ข้างบนสุด */}
         {/* ตรงนี้คือพื้นที่ที่ใช้แสดงหน้าลูกๆ ของ Layout นี้ เช่น หน้า bookingPage ที่เราเขียนไว้  */}
-        <Outlet />
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflow: { xs: "auto", md: "visible" },
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );

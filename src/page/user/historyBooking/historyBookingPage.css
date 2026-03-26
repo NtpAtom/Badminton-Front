@@ -1,0 +1,177 @@
+.history-booking-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-paper {
+    padding: 24px;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid #eee !important;
+    background-color: #fff !important;
+}
+
+.search-title {
+    margin-bottom: 20px !important;
+    font-weight: 700 !important;
+    color: #333 !important;
+    font-size: 1.1rem !important;
+}
+
+.search-fields-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.search-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.search-label {
+    font-weight: 600 !important;
+    color: #999 !important;
+    margin-left: 4px !important;
+    font-size: 0.75rem !important;
+}
+
+.search-text-field .MuiInputBase-root {
+    border-radius: 10px !important;
+    background-color: #fcfcfc !important;
+}
+
+.search-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-search {
+    text-transform: none !important;
+    padding: 10px 28px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2) !important;
+}
+
+.btn-clear {
+    text-transform: none !important;
+    padding: 10px 20px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+    border-color: #e0e0e0 !important;
+}
+
+.btn-clear:hover {
+    border-color: #ccc !important;
+    background-color: #f9f9f9 !important;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Mobile specific scrolling */
+@media (max-width: 900px) {
+    .history-booking-container {
+        height: 100%;
+    }
+}
+
+.profile-header {
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .profile-header {
+        margin-top: 0.5rem;
+    }
+}
+
+.profile-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.profile-header p {
+    color: #666;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.table-wrapper {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.status-pending {
+    background-color: #fff4e5;
+    color: #b26a00;
+    border: 1px solid #ffe2bc;
+}
+
+.status-confirmed {
+    background-color: #edf7ed;
+    color: #2e7d32;
+    border: 1px solid #d1eed1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .search-fields-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-actions {
+        margin-top: 8px;
+    }
+
+    .search-actions button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .history-booking-container {
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .search-paper {
+        padding: 16px;
+    }
+}

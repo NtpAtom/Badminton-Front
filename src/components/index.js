@@ -5,3 +5,4 @@ export { default as Checkbox } from './Checkbox';
 export { default as Radio } from './Radio';
 export { default as Textarea } from './Textarea';
 export { default as Label } from './Label';
+export { default as DataTable } from './DataTable';
