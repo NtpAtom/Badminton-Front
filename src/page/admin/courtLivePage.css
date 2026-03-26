@@ -1,0 +1,507 @@
+/* ===== Court Live Page ===== */
+.court-live-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: courtFadeIn 0.5s ease-out;
+}
+
+@keyframes courtFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header --- */
+.court-live-header { margin-bottom: 0; }
+
+.court-live-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.court-live-header p {
+    color: #64748b;
+    margin-top: 6px;
+    font-size: 1rem;
+}
+
+/* --- Controls --- */
+.court-live-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.date-picker-wrapper input[type="date"] {
+    padding: 10px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    min-width: 180px;
+}
+
+.date-picker-wrapper input[type="date"]:hover { border-color: #94a3b8; }
+.date-picker-wrapper input[type="date"]:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.branch-select {
+    padding: 10px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    min-width: 200px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+}
+
+.branch-select:hover { border-color: #94a3b8; }
+.branch-select:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #16a34a;
+    background: #f0fdf4;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #bbf7d0;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #16a34a;
+    border-radius: 50%;
+    animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* --- Stats --- */
+.court-live-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.stat-icon.total { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+.stat-icon.available { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+.stat-icon.booked-icon { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+.stat-icon.in-use-icon { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+
+.stat-info h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.stat-info p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* --- Date Section --- */
+.date-section {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.date-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+    color: #fff;
+}
+
+.date-section-header .day-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.date-section-header .day-info span {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.date-section-header .court-count {
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* ===== TABLE SCHEDULE ===== */
+:root {
+    --court-info-width: 160px;
+}
+
+.schedule-table-wrapper {
+    overflow-x: auto;
+}
+
+.schedule-table-container {
+    position: relative;
+    min-width: 900px;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* Header */
+.schedule-table thead th {
+    padding: 12px 4px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #475569;
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    border-right: 1px solid #f1f5f9;
+}
+
+.schedule-table thead th.table-corner {
+    width: var(--court-info-width);
+    min-width: var(--court-info-width);
+    text-align: left;
+    padding-left: 16px;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.schedule-table thead th.current-hour {
+    color: #dc2626;
+    font-weight: 800;
+    background: #fef2f2;
+}
+
+/* Court Row */
+.court-table-row { transition: background 0.2s ease; }
+.court-table-row:hover { background: #fafbff; }
+.court-table-row td { border-bottom: 1px solid #f1f5f9; }
+
+/* Court Info */
+.court-info-cell {
+    padding: 12px 16px;
+    border-right: 1px solid #e2e8f0 !important;
+    width: var(--court-info-width);
+    min-width: var(--court-info-width);
+    background: #fff;
+    vertical-align: middle;
+}
+
+.court-info-cell .court-name {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.court-info-cell .court-detail {
+    display: block;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.court-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.court-type-badge.premium {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+}
+
+.court-type-badge.standard {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+/* Slot Cells */
+.slot-cell {
+    padding: 4px 3px;
+    border-right: 1px solid #f1f5f9;
+    vertical-align: middle;
+    height: 60px;
+}
+
+.slot-inner {
+    border-radius: 8px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+    min-height: 48px;
+}
+
+/* Free Slot */
+.slot-inner.free {
+    background: transparent;
+    position: relative;
+}
+
+.free-plus {
+    display: none;
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: #94a3b8;
+    transition: all 0.15s ease;
+}
+
+.slot-inner.free:hover {
+    background: #f0f4ff;
+    border: 1px dashed #818cf8;
+}
+
+.slot-inner.free:hover .free-plus {
+    display: block;
+    color: #4f46e5;
+}
+
+/* Booked */
+.slot-inner.booked {
+    background: repeating-linear-gradient(
+        -45deg,
+        #e2e8f0,
+        #e2e8f0 4px,
+        #f1f5f9 4px,
+        #f1f5f9 8px
+    );
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+.slot-inner.booked:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+}
+
+/* In Use */
+.slot-inner.in-use {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    border: 1px solid #0f766e;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+}
+
+.slot-inner.in-use:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+    z-index: 2;
+}
+
+/* Slot Text */
+.slot-time {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.slot-user {
+    font-size: 0.65rem;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+/* ===== CURRENT TIME LINE ===== */
+.current-time-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dc2626;
+    z-index: 10;
+    pointer-events: none;
+    transition: left 60s linear;
+}
+
+.current-time-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -5px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #dc2626;
+}
+
+.current-time-label {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 0 0 6px 6px;
+    white-space: nowrap;
+}
+
+/* --- Legend --- */
+.schedule-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.legend-color.free {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+}
+
+.legend-color.booked {
+    background: repeating-linear-gradient(
+        -45deg,
+        #e2e8f0,
+        #e2e8f0 3px,
+        #f1f5f9 3px,
+        #f1f5f9 6px
+    );
+    border: 1px solid #cbd5e1;
+}
+
+.legend-color.in-use {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .court-live-container {
+        padding: 12px;
+        gap: 16px;
+    }
+
+    .court-live-header h1 { font-size: 1.6rem; }
+
+    .court-live-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .live-indicator {
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    .date-picker-wrapper input[type="date"],
+    .branch-select {
+        width: 100%;
+    }
+}
