@@ -1,65 +1,46 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import "./courtLivePage.css";
 import ModalCourtLive from "./modalCourtLive";
+import axios from "axios";
+import { useLogin } from "../../store/loginStore";
 
-// ===== Mock Data =====
-const INITIAL_COURTS = [
-  { court_id: 1, court_name: "สนาม 1", size: "40x20m", floor_type: "Vinyl Floor", court_type: "Premium" },
-  { court_id: 2, court_name: "สนาม 2", size: "40x20m", floor_type: "Vinyl Floor", court_type: "Standard" },
-  { court_id: 3, court_name: "สนาม 3", size: "30x15m", floor_type: "PVC Floor", court_type: "Standard" },
-  { court_id: 4, court_name: "สนาม 4", size: "40x20m", floor_type: "Vinyl Floor", court_type: "Premium" },
-];
+const API_BASE = "http://localhost:3000/api";
 
-const INITIAL_BOOKINGS = [
-  { id: 1, court_id: 1, start: "08:00", end: "10:00", user: "สมชาย", status: "booked" },
-  { id: 2, court_id: 1, start: "13:00", end: "14:00", user: "สุดา", status: "booked" },
-  { id: 3, court_id: 1, start: "16:00", end: "18:00", user: "วิชัย", status: "in-use" },
-  { id: 4, court_id: 2, start: "09:00", end: "11:00", user: "อนันต์", status: "booked" },
-  { id: 5, court_id: 2, start: "11:00", end: "12:00", user: "พิมพ์", status: "in-use" },
-  { id: 6, court_id: 2, start: "15:00", end: "17:00", user: "จิรา", status: "booked" },
-  { id: 7, court_id: 3, start: "09:00", end: "11:00", user: "กมล", status: "in-use" },
-  { id: 8, court_id: 3, start: "14:00", end: "16:00", user: "ดารา", status: "booked" },
-  { id: 9, court_id: 4, start: "08:00", end: "10:00", user: "บุญมา", status: "booked" },
-  { id: 10, court_id: 4, start: "10:00", end: "12:00", user: "ณัฐ", status: "in-use" },
-  { id: 11, court_id: 4, start: "17:00", end: "18:00", user: "ภาคิน", status: "booked" },
-];
-
-const START_HOUR = 8;
-const END_HOUR = 24;
-const TOTAL_HOURS = END_HOUR - START_HOUR;
+const START_HOUR = 8; // เวลาเริ่มให้บริการ (8 โมงเช้า)
+const END_HOUR = 24;   // เวลาปิดให้บริการ (เที่ยงคืน)
+const TOTAL_HOURS = END_HOUR - START_HOUR; // จำนวนชั่วโมงทั้งหมดใน 1 วันที่เปิด
 
 const TIME_LABELS = Array.from({ length: TOTAL_HOURS }, (_, i) =>
   `${String(START_HOUR + i).padStart(2, "0")}:00`
 );
 
-const BRANCHES = [
-  { id: 1, name: "สาขา เซ็นทรัล ลาดพร้าว" },
-  { id: 2, name: "สาขา สยามพารากอน" },
-  { id: 3, name: "สาขา เมกาบางนา" },
-];
-
 // ===== Helpers =====
+// ฟังก์ชันสำหรับแปลงวันที่เป็นชื่อวันภาษาไทย (เช่น วันจันทร์)
 function getThaiDay(dateStr) {
   const days = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
   return `วัน${days[new Date(dateStr).getDay()]}`;
 }
 
+// ฟังก์ชันสำหรับฟอร์แมตวันที่เป็นรูปแบบไทย (วว/ดด/ปปปป)
 function formatThaiDate(dateStr) {
   return new Date(dateStr).toLocaleDateString("th-TH", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+// ฟังก์ชันสำหรับดึงชั่วโมงจากสตริงเวลา (เช่น "10:00" -> 10)
 function timeToHour(time) {
+  if (!time) return 0;
   return parseInt(time.split(":")[0]);
 }
 
-function buildCellMap(courtId, bookings) {
+// ฟังก์ชันหลักที่ใช้สร้างข้อมูลสำหรับแต่ละช่องในตาราง (Time Slot)
+function buildCellMap(courtId, bookings, currentHour) {
   const cells = [];
   const hourMap = {};
   const courtBookings = bookings.filter((b) => b.court_id === courtId);
 
   courtBookings.forEach((b) => {
-    const startH = timeToHour(b.start);
-    const endH = timeToHour(b.end);
+    const startH = timeToHour(b.start_time);
+    const endH = timeToHour(b.end_time);
     for (let h = startH; h < endH; h++) {
       hourMap[h] = b;
     }
@@ -69,10 +50,18 @@ function buildCellMap(courtId, bookings) {
   while (h < END_HOUR) {
     const booking = hourMap[h];
     if (booking) {
-      const startH = timeToHour(booking.start);
-      const endH = timeToHour(booking.end);
+      const startH = timeToHour(booking.start_time);
+      const endH = timeToHour(booking.end_time);
       if (h === startH) {
-        cells.push({ hour: h, status: booking.status, booking, isStart: true, colspan: endH - startH });
+        // กำลังใช้งาน (In Use) logic: if currentHour is within booking range
+        const isInUse = currentHour >= startH && currentHour < endH;
+        cells.push({ 
+          hour: h, 
+          status: isInUse ? "in-use" : "booked", 
+          booking, 
+          isStart: true, 
+          colspan: endH - startH 
+        });
         h = endH;
       } else {
         h++;
@@ -100,16 +89,72 @@ function StatCard({ icon, value, label, iconClass }) {
 
 // ===== Main =====
 export default function CourtLivePage() {
-  const today = new Date().toISOString().split("T")[0];
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedBranch, setSelectedBranch] = useState(1);
-  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  const user = useLogin((state) => state.user);
+  const token = useLogin((state) => state.token);
+  const isAdmin = user?.user_role === "admin";
+  const isSuper = user?.user_role === "super";
 
-  // Current time for the red line
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today); // วันที่ที่เลือกดู (เริ่มต้นเป็นวันนี้)
+  const [selectedBranch, setSelectedBranch] = useState(isAdmin ? user.branch_id : ""); // สาขาที่เลือกดู
+  const [branches, setBranches] = useState([]); // รายชื่อสาขาทั้งหมด
+  const [courts, setCourts] = useState([]);     // รายชื่อสนามในสาขานั้นๆ
+  const [bookings, setBookings] = useState([]);  // รายการจองทั้งหมดของวันที่เลือก
+
+  // สำหรับแสดงเส้นสีแดงบอกเวลาปัจจุบัน
   const [currentTime, setCurrentTime] = useState(new Date());
   const [timeLineLeft, setTimeLineLeft] = useState(null);
   const tableRef = useRef(null);
 
+  // ดึงข้อมูลสาขาทั้งหมดเมื่อโหลดหน้าเว็บ
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/branch`);
+        setBranches(res.data.data);
+        if (!selectedBranch && res.data.data.length > 0) {
+          if (isAdmin) {
+             setSelectedBranch(user.branch_id);
+          } else {
+             setSelectedBranch(res.data.data[0].branch_id);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch branches", err);
+      }
+    };
+    fetchBranches();
+  }, [isAdmin, user?.branch_id]);
+
+  // ฟังก์ชันสำหรับดึงข้อมูลสนามและการจองจาก Backend
+  const fetchData = useCallback(async () => {
+    if (!selectedBranch) return;
+    try {
+      const [courtsRes, bookingsRes] = await Promise.all([
+        axios.get(`${API_BASE}/court?branch_id=${selectedBranch}`, {
+             headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API_BASE}/booking/all?branch_id=${selectedBranch}&booking_date=${selectedDate}`, {
+             headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      setCourts(courtsRes.data.data);
+      setBookings(bookingsRes.data.data);
+    } catch (err) {
+      console.error("Failed to fetch data", err);
+    }
+  }, [selectedBranch, selectedDate, token]);
+
+  // เรียกใช้ fetchData เมื่อมีการเปลี่ยนสาขาหรือวันที่ และตั้ง Auto-refresh ทุก 30 วินาที
+  useEffect(() => {
+    fetchData();
+    const refreshTimer = setInterval(() => {
+        fetchData();
+    }, 30000);
+    return () => clearInterval(refreshTimer);
+  }, [fetchData]);
+
+  // อัปเดตเวลาปัจจุบันทุกนาที เพื่อเลื่อนเส้นสีแดง
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
@@ -119,13 +164,12 @@ export default function CourtLivePage() {
   const currentMin = currentTime.getMinutes();
   const showTimeLine = currentHour >= START_HOUR && currentHour < END_HOUR;
 
-  // Measure time line position from actual table DOM
+  // คำนวณตำแหน่งของเส้นสีแดงบอกเวลาปัจจุบันบนตาราง
   const measureTimeLine = useCallback(() => {
     if (!tableRef.current || !showTimeLine) return;
     const ths = tableRef.current.querySelectorAll("thead th");
-    // ths[0] = corner, ths[1..N] = time columns
     const colIndex = currentHour - START_HOUR;
-    const th = ths[colIndex + 1]; // +1 for corner
+    const th = ths[colIndex + 1];
     if (!th) return;
     const tableRect = tableRef.current.getBoundingClientRect();
     const thRect = th.getBoundingClientRect();
@@ -139,14 +183,14 @@ export default function CourtLivePage() {
     return () => window.removeEventListener("resize", measureTimeLine);
   }, [measureTimeLine]);
 
-  // Modal state
+  // สถานะสำหรับเปิด/ปิด และส่งค่าไปยัง Modal
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("create"); // "create" | "edit"
+  const [modalMode, setModalMode] = useState("create"); 
   const [modalBooking, setModalBooking] = useState(null);
   const [modalCourt, setModalCourt] = useState(null);
   const [modalSlotHour, setModalSlotHour] = useState(null);
 
-  // Click on free slot → create
+  // เมื่อคลิกที่ช่องว่าง เพื่อสร้างการจองใหม่
   const handleClickFreeSlot = (court, hour) => {
     setModalMode("create");
     setModalBooking(null);
@@ -155,7 +199,7 @@ export default function CourtLivePage() {
     setModalOpen(true);
   };
 
-  // Click on booking → edit
+  // เมื่อคลิกที่รายการจองที่มีอยู่แล้ว เพื่อแก้ไขหรือดูรายละเอียด
   const handleClickBooking = (booking, court) => {
     setModalMode("edit");
     setModalBooking(booking);
@@ -164,45 +208,90 @@ export default function CourtLivePage() {
     setModalOpen(true);
   };
 
-  // Save handler
-  const handleSaveBooking = (data) => {
-    if (modalMode === "create") {
-      setBookings((prev) => [...prev, data]);
-    } else {
-      setBookings((prev) => prev.map((b) => (b.id === data.id ? data : b)));
+  // ส่วนของการบันทึกข้อมูลการจอง (ทั้งสร้างใหม่และแก้ไข)
+  const handleSaveBooking = async (data) => {
+    try {
+        if (modalMode === "create") {
+            await axios.post(`${API_BASE}/booking/add`, {
+                court_id: data.court_id,
+                booking_date: selectedDate,
+                start_time: data.start,
+                end_time: data.end,
+                status: "Pending"
+            }, { headers: { Authorization: `Bearer ${token}` } });
+        } else {
+            await axios.put(`${API_BASE}/booking/update/${data.booking_id}`, {
+                court_id: data.court_id,
+                booking_date: selectedDate,
+                start_time: data.start,
+                end_time: data.end,
+                status: data.status
+            }, { headers: { Authorization: `Bearer ${token}` } });
+        }
+        fetchData(); // ดึงข้อมูลใหม่หลังบันทึกสำเร็จ
+    } catch (err) {
+        alert(err.response?.data?.message || "Failed to save booking");
     }
   };
 
-  // Delete handler
-  const handleDeleteBooking = (id) => {
-    setBookings((prev) => prev.filter((b) => b.id !== id));
+  // ส่วนของการลบการจอง
+  const handleDeleteBooking = async (id) => {
+    try {
+        await axios.delete(`${API_BASE}/booking/delete/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchData(); // ดึงข้อมูลใหม่หลังลบสำเร็จ
+    } catch (err) {
+        alert(err.response?.data?.message || "Failed to delete booking");
+    }
   };
 
-  // Stats
+  // สรุปสถิติสำหรับแสดงใน Stat Cards (ใช้ useMemo เพื่อความรวดเร็ว)
   const stats = useMemo(() => {
-    const total = INITIAL_COURTS.length;
-    const inUse = new Set(bookings.filter((b) => b.status === "in-use").map((b) => b.court_id)).size;
-    const booked = new Set(bookings.filter((b) => b.status === "booked").map((b) => b.court_id)).size;
-    return { total, inUse, booked, free: Math.max(0, total - inUse) };
-  }, [bookings]);
+    const total = courts.length;
+    
+    // จองแล้ว (Booked): นับการจองทั้งหมดของทั้งวัน (ที่ไม่รวม Cancelled ซึ่งถูกกรองจาก Backend แล้ว)
+    const bookedCount = bookings.length;
+
+    // กำลังใช้งาน (In Use): นับสนามที่มีการจองอยู่ในช่วงเวลาปัจจุบัน (Red Line)
+    const inUseCourts = new Set();
+    bookings.forEach(b => {
+        const startH = timeToHour(b.start_time);
+        const endH = timeToHour(b.end_time);
+        if (currentHour >= startH && currentHour < endH) {
+            inUseCourts.add(b.court_id);
+        }
+    });
+    const inUseCount = inUseCourts.size;
+
+    // สนามว่าง (Available): จำนวนสนามทั้งหมด - จำนวนสนามที่กำลังใช้งานอยู่ ณ ตอนนี้
+    const availableCount = Math.max(0, total - inUseCount);
+
+    return {
+      total,
+      available: availableCount,
+      booked: bookedCount,
+      inUse: inUseCount,
+    };
+  }, [courts, bookings, currentHour]);
 
   return (
     <div className="court-live-container">
-      {/* Header */}
+      {/* ส่วนหัวของหน้า (Header) */}
       <div className="court-live-header">
         <h1>📋 ดูสนามสด (Court Live)</h1>
         <p>ตรวจสอบสถานะการใช้งานสนามแบบเรียลไทม์ และจัดการตารางการจอง</p>
       </div>
 
-      {/* Stats */}
+      {/* สรุปตัวเลขสถิติ (Stats Cards) */}
       <div className="court-live-stats">
         <StatCard icon="🏟️" value={stats.total} label="สนามทั้งหมด" iconClass="total" />
-        <StatCard icon="✅" value={stats.free} label="สนามว่าง" iconClass="available" />
+        <StatCard icon="✅" value={stats.available} label="สนามว่าง" iconClass="available" />
         <StatCard icon="📝" value={stats.booked} label="จองแล้ว" iconClass="booked-icon" />
         <StatCard icon="🏸" value={stats.inUse} label="กำลังใช้งาน" iconClass="in-use-icon" />
       </div>
 
-      {/* Controls */}
+      {/* ส่วนควบคุม (Controls): เลือกวันที่, เลือกสาขา, และแสดงเวลาปัจจุบัน */}
       <div className="court-live-controls">
         <div className="date-picker-wrapper">
           <input
@@ -214,10 +303,11 @@ export default function CourtLivePage() {
         <select
           className="branch-select"
           value={selectedBranch}
-          onChange={(e) => setSelectedBranch(Number(e.target.value))}
+          onChange={(e) => setSelectedBranch(e.target.value)}
+          disabled={isAdmin && !isSuper}
         >
-          {BRANCHES.map((b) => (
-            <option key={b.id} value={b.id}>{b.name}</option>
+          {branches.map((b) => (
+            <option key={b.branch_id} value={b.branch_id}>{b.branch_name}</option>
           ))}
         </select>
         <div className="live-indicator">
@@ -226,17 +316,17 @@ export default function CourtLivePage() {
         </div>
       </div>
 
-      {/* Schedule Card */}
+      {/* ส่วนแสดงตารางเวลาการจอง (Schedule Table) */}
       <div className="date-section">
         <div className="date-section-header">
           <div className="day-info">
             <h3>{getThaiDay(selectedDate)}</h3>
             <span>{formatThaiDate(selectedDate)}</span>
           </div>
-          <div className="court-count">{INITIAL_COURTS.length} สนาม</div>
+          <div className="court-count">{courts.length} สนาม</div>
         </div>
 
-        {/* Table */}
+        {/* ตัวตารางเวลา (Table Content) */}
         <div className="schedule-table-wrapper">
           <div className="schedule-table-container">
             <table className="schedule-table" ref={tableRef}>
@@ -257,17 +347,17 @@ export default function CourtLivePage() {
                 </tr>
               </thead>
               <tbody>
-                {INITIAL_COURTS.map((court) => {
-                  const cells = buildCellMap(court.court_id, bookings);
+                {courts.map((court) => {
+                  const cells = buildCellMap(court.court_id, bookings, currentHour);
                   return (
                     <tr key={court.court_id} className="court-table-row">
                       <td className="court-info-cell">
                         <span className="court-name">{court.court_name}</span>
                         <span className="court-detail">
-                          {court.size} · {court.floor_type}
+                           {court.price_per_hour} บาท/ชม.
                         </span>
-                        <span className={`court-type-badge ${court.court_type.toLowerCase()}`}>
-                          {court.court_type}
+                        <span className={`court-type-badge ${court.status}`}>
+                           {court.status}
                         </span>
                       </td>
                       {cells.map((cell, idx) => {
@@ -291,7 +381,7 @@ export default function CourtLivePage() {
                               onClick={() => handleClickBooking(cell.booking, court)}
                               title="คลิกเพื่อแก้ไข"
                             >
-                              <span className="slot-time">{cell.booking.start} - {cell.booking.end}</span>
+                              <span className="slot-time">{cell.booking.start_time.substring(0, 5)} - {cell.booking.end_time.substring(0, 5)}</span>
                               <span className="slot-user">{cell.booking.user}</span>
                             </div>
                           </td>
@@ -303,7 +393,7 @@ export default function CourtLivePage() {
               </tbody>
             </table>
 
-            {/* Current Time Line (absolute overlay) */}
+            {/* เส้นสีแดงบอกเวลาปัจจุบัน (Current Time Line) จะเลื่อนตามเวลาจริง */}
             {showTimeLine && timeLineLeft !== null && (
               <div
                 className="current-time-line"
@@ -317,7 +407,7 @@ export default function CourtLivePage() {
           </div>
         </div>
 
-        {/* Legend */}
+        {/* คำอธิบายความหมายของสี (Legend) */}
         <div className="schedule-legend">
           <div className="legend-item">
             <span className="legend-color free"></span>
@@ -325,7 +415,7 @@ export default function CourtLivePage() {
           </div>
           <div className="legend-item">
             <span className="legend-color booked"></span>
-            จองแล้ว (Booked)
+            จอง (Booked)
           </div>
           <div className="legend-item">
             <span className="legend-color in-use"></span>
@@ -334,19 +424,21 @@ export default function CourtLivePage() {
         </div>
       </div>
 
-      {/* Modal */}
-      <ModalCourtLive
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        mode={modalMode}
-        booking={modalBooking}
-        court={modalCourt}
-        slotHour={modalSlotHour}
-        allCourts={INITIAL_COURTS}
-        allBookings={bookings}
-        onSave={handleSaveBooking}
-        onDelete={handleDeleteBooking}
-      />
+      {/* โมดอลสำหรับจัดการการจอง (Modal) */}
+      {modalOpen && (
+        <ModalCourtLive
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            mode={modalMode}
+            booking={modalBooking}
+            court={modalCourt}
+            slotHour={modalSlotHour}
+            allCourts={courts}
+            allBookings={bookings}
+            onSave={handleSaveBooking}
+            onDelete={handleDeleteBooking}
+        />
+      )}
     </div>
   );
 }

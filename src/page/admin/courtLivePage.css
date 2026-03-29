@@ -370,15 +370,15 @@
 
 /* In Use */
 .slot-inner.in-use {
-    background: linear-gradient(135deg, #0d9488, #14b8a6);
-    border: 1px solid #0f766e;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    border: 1px solid #15803d;
     color: #fff;
-    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
 .slot-inner.in-use:hover {
     transform: scale(1.03);
-    box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
     z-index: 2;
 }
 
@@ -478,7 +478,7 @@
 }
 
 .legend-color.in-use {
-    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    background: linear-gradient(135deg, #16a34a, #22c55e);
 }
 
 /* --- Responsive --- */

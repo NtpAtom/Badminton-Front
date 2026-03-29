@@ -40,19 +40,19 @@ function generateHourOptions(from, to) {
 }
 
 /**
- * Modal สำหรับจัดการ booking
+ * Modal สำหรับจัดการ booking (สร้างใหม่ / แก้ไข / ลบ)
  * 
  * Props:
- *  - open: boolean
- *  - onClose: () => void
- *  - mode: "create" | "edit"
- *  - booking: existing booking object (for edit mode)
- *  - court: court object for the clicked slot
- *  - slotHour: the clicked hour (for create mode)
- *  - allCourts: array of all courts
- *  - allBookings: array of all bookings
- *  - onSave: (bookingData) => void
- *  - onDelete: (bookingId) => void
+ *  - open: เปิด/ปิด Modal
+ *  - onClose: ฟังก์ชันปิด Modal
+ *  - mode: โหมดการทำงาน ("create" สร้างใหม่, "edit" แก้ไข)
+ *  - booking: ข้อมูลการจองที่มีอยู่ (สำหรับโหมด edit)
+ *  - court: ข้อมูลสนามที่คลิกเลือก (สำหรับโหมด create)
+ *  - slotHour: เวลาที่คลิกเลือก (สำหรับโหมด create)
+ *  - allCourts: รายชื่อสนามทั้งหมดในสาขา
+ *  - allBookings: รายการจองทั้งหมดในวันนั้น (เอาไว้เช็คเวลาซ้อน)
+ *  - onSave: ฟังก์ชันส่งข้อมูลการจองกลับไปยังหน้าหลักเพื่อบันทึก
+ *  - onDelete: ฟังก์ชันส่ง ID การจองกลับไปเพื่อลบ
  */
 export default function ModalCourtLive({
   open,
@@ -68,26 +68,26 @@ export default function ModalCourtLive({
 }) {
   const isEdit = mode === "edit";
 
-  // Form state
+  // สถานะของฟอร์ม (Form State)
   const [startHour, setStartHour] = useState(
-    isEdit ? parseInt(booking?.start) : (slotHour ?? START_HOUR)
+    isEdit ? parseInt(booking?.start_time) : (slotHour ?? START_HOUR)
   );
   const [endHour, setEndHour] = useState(
-    isEdit ? parseInt(booking?.end) : ((slotHour ?? START_HOUR) + 1)
+    isEdit ? parseInt(booking?.end_time) : ((slotHour ?? START_HOUR) + 1)
   );
   const [selectedCourtId, setSelectedCourtId] = useState(
     isEdit ? booking?.court_id : court?.court_id
   );
-  const [userName, setUserName] = useState(isEdit ? booking?.user : "");
+  const [userName, setUserName] = useState(isEdit ? (booking?.user_name || booking?.user) : "");
 
-  // Reset form when modal opens with new data
+  // รีเซ็ตค่าในฟอร์มทุกครั้งที่เปิด Modal ขึ้นมาใหม่
   React.useEffect(() => {
     if (open) {
       if (mode === "edit" && booking) {
-        setStartHour(parseInt(booking.start));
-        setEndHour(parseInt(booking.end));
+        setStartHour(parseInt(booking.start_time));
+        setEndHour(parseInt(booking.end_time));
         setSelectedCourtId(booking.court_id);
-        setUserName(booking.user);
+        setUserName(booking.user_name || booking.user || "");
       } else {
         setStartHour(slotHour ?? START_HOUR);
         setEndHour((slotHour ?? START_HOUR) + 1);
@@ -97,49 +97,51 @@ export default function ModalCourtLive({
     }
   }, [open, mode, booking, slotHour, court]);
 
-  // Find available courts for the selected time range
+  // ค้นหาสนามที่ว่าง (Available Courts) ในช่วงเวลาที่เลือก
   const availableCourts = useMemo(() => {
     if (!allCourts || !allBookings) return [];
 
     return allCourts.filter((c) => {
-      // Check if this court is free in the selected time range
+      // ตรวจสอบว่าสนามนี้มีการจองซ้อนในช่วงเวลาที่เลือกหรือไม่
       const courtBookings = allBookings.filter(
-        (b) => b.court_id === c.court_id && (isEdit ? b.id !== booking?.id : true)
+        (b) => b.court_id === c.court_id && (isEdit ? b.booking_id !== booking?.booking_id : true)
       );
       const isFree = courtBookings.every((b) => {
-        const bStart = parseInt(b.start);
-        const bEnd = parseInt(b.end);
-        // No overlap
+        const bStart = parseInt(b.start_time);
+        const bEnd = parseInt(b.end_time);
+        // เช็คว่าเวลาไม่ทับซ้อนกัน (Overlap check)
         return endHour <= bStart || startHour >= bEnd;
       });
       return isFree;
     });
   }, [allCourts, allBookings, startHour, endHour, booking, isEdit]);
 
-  // Validate
+  // ตรวจสอบความถูกต้องของข้อมูลก่อนกดบันทึก
   const isValid =
     startHour < endHour &&
     selectedCourtId &&
-    userName.trim() !== "" &&
+    (isEdit ? true : userName.trim() !== "") &&
     availableCourts.some((c) => c.court_id === selectedCourtId);
 
   const handleSave = () => {
     if (!isValid) return;
     onSave({
-      id: isEdit ? booking.id : Date.now(),
+      booking_id: isEdit ? booking.booking_id : null,
       court_id: selectedCourtId,
       start: hourLabel(startHour),
       end: hourLabel(endHour),
       user: userName.trim(),
-      status: isEdit ? booking.status : "booked",
+      status: isEdit ? booking.status : "Pending",
     });
     onClose();
   };
 
   const handleDelete = () => {
     if (isEdit && booking) {
-      onDelete(booking.id);
-      onClose();
+      if (window.confirm("คุณแน่ใจหรือไม่ว่าต้องการลบการจองนี้?")) {
+        onDelete(booking.booking_id);
+        onClose();
+      }
     }
   };
 
@@ -156,7 +158,7 @@ export default function ModalCourtLive({
         },
       }}
     >
-      {/* Header */}
+      {/* ส่วนหัวของ Modal (Header) */}
       <DialogTitle
         sx={{
           background: isEdit
@@ -166,7 +168,7 @@ export default function ModalCourtLive({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          py: 2,
+          p: 5
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -187,33 +189,10 @@ export default function ModalCourtLive({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ pt: 3, pb: 1, px: 3 }}>
-        {/* User Name */}
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="subtitle2" sx={{ mb: 0.5, fontWeight: 600, color: "#475569" }}>
-            ชื่อผู้จอง
-          </Typography>
-          <input
-            type="text"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="กรอกชื่อผู้จอง..."
-            style={{
-              width: "100%",
-              padding: "10px 14px",
-              border: "2px solid #e2e8f0",
-              borderRadius: "10px",
-              fontSize: "0.95rem",
-              outline: "none",
-              transition: "border-color 0.2s",
-              boxSizing: "border-box",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#1a237e")}
-            onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
-          />
-        </Box>
+      <DialogContent sx={{ pt: 3, pb: 1, px: 3, mt: 5 }}>
 
-        {/* Time Selection */}
+
+        {/* การเลือกช่วงเวลา (Time Selection) */}
         <Box sx={{ mb: 2.5 }}>
           <Typography
             variant="subtitle2"
@@ -267,7 +246,7 @@ export default function ModalCourtLive({
 
         <Divider sx={{ my: 2 }} />
 
-        {/* Court Selection */}
+        {/* การเลือกสนาม (Court Selection) */}
         <Box sx={{ mb: 1 }}>
           <Typography
             variant="subtitle2"
@@ -343,7 +322,7 @@ export default function ModalCourtLive({
         </Box>
       </DialogContent>
 
-      {/* Actions */}
+      {/* ปุ่มจัดการต่างๆ (Actions) */}
       <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
         {isEdit && (
           <Button
