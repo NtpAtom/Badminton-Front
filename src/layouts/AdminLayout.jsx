@@ -60,7 +60,7 @@ export default function AdminLayout() {
     { text: "Dashboard", icon: <DashboardIcon />, path: "/admin/dashboard" },
     { text: "จัดการสนาม (Courts)", icon: <SportsIcon />, path: "/admin/courts" },
     { text: "จัดการสาขา (Branches)", icon: <BusinessIcon />, path: "/admin/branches" },
-    { text: "จัดการผู้ใช้งาน (Users)", icon: <PeopleIcon />, path: "/admin/users" },
+    { text: "จัดการผู้ใช้งาน (Users)", icon: <PeopleIcon />, path: "/admin/manageUser" },
     { text: "ตั้งค่าระบบ", icon: <SettingsIcon />, path: "/admin/settings" },
   ];
 
@@ -152,8 +152,8 @@ export default function AdminLayout() {
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 45 }}>{item.icon}</ListItemIcon>
-                  <ListItemText 
-                    primary={item.text} 
+                  <ListItemText
+                    primary={item.text}
                     primaryTypographyProps={{ fontWeight: location.pathname === item.path ? 700 : 500 }}
                   />
                 </ListItemButton>

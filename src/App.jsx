@@ -9,7 +9,8 @@ import HistoryBookingPage from "./page/user/historyBooking/historyBookingPage";
 import Loading from "./components/Loading";
 import ProfilePage from "./page/profile/profilePage";
 import AdminLayout from "./layouts/AdminLayout";
-import CourtPage from "./page/admin/courtLivePage";
+import CourtPage from "./page/admin/manageCourt/courtLivePage";
+import ManageUserPage from "./page/admin/manageUser/manageUserPage";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         >
           <Route index element={<Navigate to="courts" replace />} />
           <Route path="courts" element={<CourtPage />} />
+          <Route path="manageUser" element={<ManageUserPage />} />
           <Route path="dashboard" element={<div style={{ padding: '20px' }}><h1>Admin Dashboard</h1></div>} />
         </Route>
       </Routes>

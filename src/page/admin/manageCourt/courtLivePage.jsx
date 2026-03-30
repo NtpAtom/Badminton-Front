@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import "./courtLivePage.css";
-import ModalCourtLive from "./modalCourtLive";
+import ModalCourtLive from "../modalCourtLive";
 import axios from "axios";
-import { useLogin } from "../../store/loginStore";
+import { useLogin } from "../../../store/loginStore";
 
 const API_BASE = "http://localhost:3000/api";
 
@@ -55,12 +55,12 @@ function buildCellMap(courtId, bookings, currentHour) {
       if (h === startH) {
         // กำลังใช้งาน (In Use) logic: if currentHour is within booking range
         const isInUse = currentHour >= startH && currentHour < endH;
-        cells.push({ 
-          hour: h, 
-          status: isInUse ? "in-use" : "booked", 
-          booking, 
-          isStart: true, 
-          colspan: endH - startH 
+        cells.push({
+          hour: h,
+          status: isInUse ? "in-use" : "booked",
+          booking,
+          isStart: true,
+          colspan: endH - startH
         });
         h = endH;
       } else {
@@ -114,9 +114,9 @@ export default function CourtLivePage() {
         setBranches(res.data.data);
         if (!selectedBranch && res.data.data.length > 0) {
           if (isAdmin) {
-             setSelectedBranch(user.branch_id);
+            setSelectedBranch(user.branch_id);
           } else {
-             setSelectedBranch(res.data.data[0].branch_id);
+            setSelectedBranch(res.data.data[0].branch_id);
           }
         }
       } catch (err) {
@@ -132,10 +132,10 @@ export default function CourtLivePage() {
     try {
       const [courtsRes, bookingsRes] = await Promise.all([
         axios.get(`${API_BASE}/court?branch_id=${selectedBranch}`, {
-             headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` }
         }),
         axios.get(`${API_BASE}/booking/all?branch_id=${selectedBranch}&booking_date=${selectedDate}`, {
-             headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` }
         })
       ]);
       setCourts(courtsRes.data.data);
@@ -149,7 +149,7 @@ export default function CourtLivePage() {
   useEffect(() => {
     fetchData();
     const refreshTimer = setInterval(() => {
-        fetchData();
+      fetchData();
     }, 30000);
     return () => clearInterval(refreshTimer);
   }, [fetchData]);
@@ -185,7 +185,7 @@ export default function CourtLivePage() {
 
   // สถานะสำหรับเปิด/ปิด และส่งค่าไปยัง Modal
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("create"); 
+  const [modalMode, setModalMode] = useState("create");
   const [modalBooking, setModalBooking] = useState(null);
   const [modalCourt, setModalCourt] = useState(null);
   const [modalSlotHour, setModalSlotHour] = useState(null);
@@ -211,56 +211,56 @@ export default function CourtLivePage() {
   // ส่วนของการบันทึกข้อมูลการจอง (ทั้งสร้างใหม่และแก้ไข)
   const handleSaveBooking = async (data) => {
     try {
-        if (modalMode === "create") {
-            await axios.post(`${API_BASE}/booking/add`, {
-                court_id: data.court_id,
-                booking_date: selectedDate,
-                start_time: data.start,
-                end_time: data.end,
-                status: "Pending"
-            }, { headers: { Authorization: `Bearer ${token}` } });
-        } else {
-            await axios.put(`${API_BASE}/booking/update/${data.booking_id}`, {
-                court_id: data.court_id,
-                booking_date: selectedDate,
-                start_time: data.start,
-                end_time: data.end,
-                status: data.status
-            }, { headers: { Authorization: `Bearer ${token}` } });
-        }
-        fetchData(); // ดึงข้อมูลใหม่หลังบันทึกสำเร็จ
+      if (modalMode === "create") {
+        await axios.post(`${API_BASE}/booking/add`, {
+          court_id: data.court_id,
+          booking_date: selectedDate,
+          start_time: data.start,
+          end_time: data.end,
+          status: "Pending"
+        }, { headers: { Authorization: `Bearer ${token}` } });
+      } else {
+        await axios.put(`${API_BASE}/booking/update/${data.booking_id}`, {
+          court_id: data.court_id,
+          booking_date: selectedDate,
+          start_time: data.start,
+          end_time: data.end,
+          status: data.status
+        }, { headers: { Authorization: `Bearer ${token}` } });
+      }
+      fetchData(); // ดึงข้อมูลใหม่หลังบันทึกสำเร็จ
     } catch (err) {
-        alert(err.response?.data?.message || "Failed to save booking");
+      alert(err.response?.data?.message || "Failed to save booking");
     }
   };
 
   // ส่วนของการลบการจอง
   const handleDeleteBooking = async (id) => {
     try {
-        await axios.delete(`${API_BASE}/booking/delete/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        fetchData(); // ดึงข้อมูลใหม่หลังลบสำเร็จ
+      await axios.delete(`${API_BASE}/booking/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData(); // ดึงข้อมูลใหม่หลังลบสำเร็จ
     } catch (err) {
-        alert(err.response?.data?.message || "Failed to delete booking");
+      alert(err.response?.data?.message || "Failed to delete booking");
     }
   };
 
   // สรุปสถิติสำหรับแสดงใน Stat Cards (ใช้ useMemo เพื่อความรวดเร็ว)
   const stats = useMemo(() => {
     const total = courts.length;
-    
+
     // จองแล้ว (Booked): นับการจองทั้งหมดของทั้งวัน (ที่ไม่รวม Cancelled ซึ่งถูกกรองจาก Backend แล้ว)
     const bookedCount = bookings.length;
 
     // กำลังใช้งาน (In Use): นับสนามที่มีการจองอยู่ในช่วงเวลาปัจจุบัน (Red Line)
     const inUseCourts = new Set();
     bookings.forEach(b => {
-        const startH = timeToHour(b.start_time);
-        const endH = timeToHour(b.end_time);
-        if (currentHour >= startH && currentHour < endH) {
-            inUseCourts.add(b.court_id);
-        }
+      const startH = timeToHour(b.start_time);
+      const endH = timeToHour(b.end_time);
+      if (currentHour >= startH && currentHour < endH) {
+        inUseCourts.add(b.court_id);
+      }
     });
     const inUseCount = inUseCourts.size;
 
@@ -354,10 +354,10 @@ export default function CourtLivePage() {
                       <td className="court-info-cell">
                         <span className="court-name">{court.court_name}</span>
                         <span className="court-detail">
-                           {court.price_per_hour} บาท/ชม.
+                          {court.price_per_hour} บาท/ชม.
                         </span>
                         <span className={`court-type-badge ${court.status}`}>
-                           {court.status}
+                          {court.status}
                         </span>
                       </td>
                       {cells.map((cell, idx) => {
@@ -427,16 +427,16 @@ export default function CourtLivePage() {
       {/* โมดอลสำหรับจัดการการจอง (Modal) */}
       {modalOpen && (
         <ModalCourtLive
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
-            mode={modalMode}
-            booking={modalBooking}
-            court={modalCourt}
-            slotHour={modalSlotHour}
-            allCourts={courts}
-            allBookings={bookings}
-            onSave={handleSaveBooking}
-            onDelete={handleDeleteBooking}
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          mode={modalMode}
+          booking={modalBooking}
+          court={modalCourt}
+          slotHour={modalSlotHour}
+          allCourts={courts}
+          allBookings={bookings}
+          onSave={handleSaveBooking}
+          onDelete={handleDeleteBooking}
         />
       )}
     </div>
