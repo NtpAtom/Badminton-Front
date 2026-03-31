@@ -11,6 +11,7 @@ import ProfilePage from "./page/profile/profilePage";
 import AdminLayout from "./layouts/AdminLayout";
 import CourtPage from "./page/admin/manageCourt/courtLivePage";
 import ManageUserPage from "./page/admin/manageUser/manageUserPage";
+import ManageBranchPage from "./page/admin/manageBranch/manageBranchPage";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
         <Route
           path="/user"
           element={
-            <ProtectedRoute role={['user', 'admin']}>
+            <ProtectedRoute role={['user', 'admin', 'super admin']}>
               <UserLayout />
             </ProtectedRoute>
           }
@@ -49,7 +50,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute role={['admin']}>
+            <ProtectedRoute role={['admin', 'super admin']}>
               <AdminLayout />
             </ProtectedRoute>
           }
@@ -57,6 +58,7 @@ function App() {
           <Route index element={<Navigate to="courts" replace />} />
           <Route path="courts" element={<CourtPage />} />
           <Route path="manageUser" element={<ManageUserPage />} />
+          <Route path="manageBranch" element={<ManageBranchPage />} />
           <Route path="dashboard" element={<div style={{ padding: '20px' }}><h1>Admin Dashboard</h1></div>} />
         </Route>
       </Routes>
