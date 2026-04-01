@@ -63,6 +63,7 @@ export default function AdminLayout() {
       { text: "จัดการสาขา (Branches)", icon: <BusinessIcon />, path: "/admin/manageBranch" }
     ] : []),
     { text: "จัดการผู้ใช้งาน (Users)", icon: <PeopleIcon />, path: "/admin/manageUser" },
+    { text: "ประวัติการจอง (History)", icon: <DashboardIcon />, path: "/admin/history-bookings" },
     { text: "ตั้งค่าระบบ", icon: <SettingsIcon />, path: "/admin/settings" },
   ];
 

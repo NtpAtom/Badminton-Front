@@ -1,0 +1,149 @@
+.history-booking-admin-container {
+    padding-bottom: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.admin-header-text h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a237e;
+    margin-bottom: 4px;
+}
+
+.admin-header-text p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* Search Paper Styling */
+.search-paper {
+    padding: 20px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    margin-bottom: 24px;
+    border: 1px solid #f1f5f9;
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.search-fields-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.search-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.flex-1 { flex: 1; min-width: 150px; }
+.flex-2 { flex: 2; min-width: 200px; }
+
+.search-label {
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+}
+
+.search-text-field .MuiOutlinedInput-root,
+.search-select,
+.search-date-field .MuiOutlinedInput-root {
+    border-radius: 10px;
+    background-color: #f8fafc;
+    transition: all 0.2s;
+}
+
+.search-text-field .MuiOutlinedInput-root:hover,
+.search-select:hover {
+    background-color: #f1f5f9;
+}
+
+.search-text-field .Mui-focused,
+.search-select.Mui-focused {
+    background-color: #fff;
+}
+
+.search-actions {
+    margin-bottom: 4px;
+}
+
+.btn-search {
+    border-radius: 10px;
+    padding: 8px 24px;
+    text-transform: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+    min-width: 120px;
+    height: 40px;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+.status-pending {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #ffe0b2;
+}
+
+.status-confirmed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.status-cancelled {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    background: #fff;
+    border: 1px solid #f1f5f9;
+}
+
+@media (max-width: 900px) {
+    .search-fields-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .flex-1, .flex-2 {
+        flex: none;
+        width: 100%;
+    }
+    .search-actions {
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+}

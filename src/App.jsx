@@ -12,6 +12,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import CourtPage from "./page/admin/manageCourt/courtLivePage";
 import ManageUserPage from "./page/admin/manageUser/manageUserPage";
 import ManageBranchPage from "./page/admin/manageBranch/manageBranchPage";
+import HistoryBookingAdmin from "./page/admin/historybooking/historyBookingAdmin";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
           <Route path="courts" element={<CourtPage />} />
           <Route path="manageUser" element={<ManageUserPage />} />
           <Route path="manageBranch" element={<ManageBranchPage />} />
+          <Route path="history-bookings" element={<HistoryBookingAdmin />} />
           <Route path="dashboard" element={<div style={{ padding: '20px' }}><h1>Admin Dashboard</h1></div>} />
         </Route>
       </Routes>
