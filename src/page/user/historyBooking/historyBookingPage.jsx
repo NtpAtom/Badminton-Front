@@ -40,6 +40,7 @@ function historyBookingPage() {
 
             const data = res.data.data;
             const count = res.data.total || 0;
+            console.log(data);
 
             setTimeout(() => {
                 setRows(data);
@@ -65,7 +66,7 @@ function historyBookingPage() {
     const handleClearAndFetch = () => {
         setStartDate('');
         setEndDate('');
-        
+
         const fetchCleared = async () => {
             setIsLoading(true)
             try {
@@ -111,17 +112,18 @@ function historyBookingPage() {
         { id: 'end_time', label: 'สิ้นสุด', align: 'right', minWidth: 70, format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span> },
         { id: 'duration_hours', label: 'ชั่วโมง', align: 'right', minWidth: 70 },
         { id: 'total_price', label: 'ราคารวม', align: 'right', minWidth: 100, format: (value) => <strong>{value} บาท</strong> },
-        { 
-            id: 'status', 
-            label: 'สถานะ', 
-            align: 'right', 
-            minWidth: 100, 
+        {
+            id: 'status',
+            label: 'สถานะ',
+            align: 'right',
+            minWidth: 100,
             format: (value) => (
                 <Box className={`status-badge ${value === 'Pending' ? 'status-pending' : 'status-confirmed'}`}>
                     {value}
                 </Box>
             )
         },
+        { id: 'remake', label: 'หมายเหตุ', minWidth: 100 }
     ];
 
     return (
