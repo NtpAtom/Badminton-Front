@@ -16,6 +16,8 @@ import {
   MenuItem,
   Drawer,
   Divider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -35,6 +37,9 @@ export default function AdminLayout() {
 
   const user = useLogin((state) => state.user) || { user_name: "Admin", role: "admin" };
   const logout = useLogin((state) => state.logout);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -119,10 +124,11 @@ export default function AdminLayout() {
 
       {/* Sidebar */}
       <Drawer
-        variant="persistent"
+        variant={isMobile ? "temporary" : "persistent"}
         open={isSidebarOpen}
+        onClose={toggleSidebar}
         sx={{
-          width: isSidebarOpen ? drawerWidth : 0,
+          width: drawerWidth,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
@@ -172,9 +178,10 @@ export default function AdminLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, md: 4 },
+          p: { xs: 1.5, sm: 2, md: 4 },
           transition: "margin 0.3s ease",
           width: "100%",
+          overflowX: "hidden", // ป้องกันเลื่อนแนวนอนถ้าไม่จำเป็น
         }}
       >
         <Toolbar />

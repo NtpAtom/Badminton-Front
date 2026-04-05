@@ -27,8 +27,15 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .step-header {
@@ -105,8 +112,15 @@
   margin-bottom: 12px;
 }
 
-.badge-premium { background: #f0f9ff; color: #0369a1; }
-.badge-standard { background: #f8fafc; color: #64748b; }
+.badge-premium {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.badge-standard {
+  background: #f8fafc;
+  color: #64748b;
+}
 
 .price-row {
   display: flex;
@@ -117,9 +131,21 @@
   border-top: 1px dashed #e2e8f0;
 }
 
-.price-label { font-size: 13px; color: #64748b; }
-.price-value { font-size: 16px; font-weight: 700; color: #0f172a; }
-.total-price { font-size: 20px; color: #0f172a; }
+.price-label {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.price-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.total-price {
+  font-size: 20px;
+  color: #0f172a;
+}
 
 .select-court-btn {
   width: 100%;
@@ -163,7 +189,46 @@
 }
 
 @media (max-width: 640px) {
-  .booking-container { padding: 16px; }
-  .input-row { flex-direction: column; gap: 16px; }
-  .input-group { min-width: 100%; }
+  .booking-container {
+    padding: 16px;
+  }
+
+  .booking-title {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+
+  .step-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .step-header h2 {
+    font-size: 15px;
+  }
+
+  .input-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .input-group {
+    min-width: 100%;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .summary-item {
+    width: 100%;
+  }
+
+  .court-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }

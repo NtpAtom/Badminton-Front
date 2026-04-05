@@ -11,12 +11,21 @@
 }
 
 @keyframes courtFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- Header --- */
-.court-live-header { margin-bottom: 0; }
+.court-live-header {
+    margin-bottom: 0;
+}
 
 .court-live-header h1 {
     font-size: 2.2rem;
@@ -56,7 +65,10 @@
     min-width: 180px;
 }
 
-.date-picker-wrapper input[type="date"]:hover { border-color: #94a3b8; }
+.date-picker-wrapper input[type="date"]:hover {
+    border-color: #94a3b8;
+}
+
 .date-picker-wrapper input[type="date"]:focus {
     border-color: #1a237e;
     box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
@@ -81,7 +93,10 @@
     padding-right: 36px;
 }
 
-.branch-select:hover { border-color: #94a3b8; }
+.branch-select:hover {
+    border-color: #94a3b8;
+}
+
 .branch-select:focus {
     border-color: #1a237e;
     box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
@@ -110,8 +125,17 @@
 }
 
 @keyframes livePulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.4); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.4);
+    }
 }
 
 /* --- Stats --- */
@@ -148,10 +172,21 @@
     flex-shrink: 0;
 }
 
-.stat-icon.total { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
-.stat-icon.available { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
-.stat-icon.booked-icon { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-.stat-icon.in-use-icon { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+.stat-icon.total {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+
+.stat-icon.available {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.stat-icon.booked-icon {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+}
+
+.stat-icon.in-use-icon {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
 
 .stat-info h4 {
     margin: 0;
@@ -255,9 +290,17 @@
 }
 
 /* Court Row */
-.court-table-row { transition: background 0.2s ease; }
-.court-table-row:hover { background: #fafbff; }
-.court-table-row td { border-bottom: 1px solid #f1f5f9; }
+.court-table-row {
+    transition: background 0.2s ease;
+}
+
+.court-table-row:hover {
+    background: #fafbff;
+}
+
+.court-table-row td {
+    border-bottom: 1px solid #f1f5f9;
+}
 
 /* Court Info */
 .court-info-cell {
@@ -351,13 +394,11 @@
 
 /* Booked */
 .slot-inner.booked {
-    background: repeating-linear-gradient(
-        -45deg,
-        #e2e8f0,
-        #e2e8f0 4px,
-        #f1f5f9 4px,
-        #f1f5f9 8px
-    );
+    background: repeating-linear-gradient(-45deg,
+            #e2e8f0,
+            #e2e8f0 4px,
+            #f1f5f9 4px,
+            #f1f5f9 8px);
     border: 1px solid #cbd5e1;
     color: #475569;
 }
@@ -467,13 +508,11 @@
 }
 
 .legend-color.booked {
-    background: repeating-linear-gradient(
-        -45deg,
-        #e2e8f0,
-        #e2e8f0 3px,
-        #f1f5f9 3px,
-        #f1f5f9 6px
-    );
+    background: repeating-linear-gradient(-45deg,
+            #e2e8f0,
+            #e2e8f0 3px,
+            #f1f5f9 3px,
+            #f1f5f9 6px);
     border: 1px solid #cbd5e1;
 }
 
@@ -482,26 +521,79 @@
 }
 
 /* --- Responsive --- */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .court-live-container {
         padding: 12px;
         gap: 16px;
     }
 
-    .court-live-header h1 { font-size: 1.6rem; }
+    .court-live-header h1 {
+        font-size: 1.6rem !important;
+    }
+
+    .court-live-header p {
+        font-size: 0.9rem !important;
+    }
 
     .court-live-controls {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
     }
 
     .live-indicator {
         margin-left: 0;
         justify-content: center;
+        padding: 6px 12px;
     }
 
     .date-picker-wrapper input[type="date"],
     .branch-select {
         width: 100%;
+        min-width: 100%;
+    }
+
+    .court-live-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .stat-info h4 {
+        font-size: 1.1rem;
+    }
+
+    .stat-info p {
+        font-size: 0.7rem;
+    }
+
+    .schedule-table thead th {
+        font-size: 0.7rem;
+        padding: 8px 2px;
+    }
+
+    .court-info-cell {
+        padding: 8px 12px;
+        min-width: 120px;
+    }
+
+    .court-info-cell .court-name {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .court-live-stats {
+        grid-template-columns: 1fr;
     }
 }

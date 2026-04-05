@@ -14,6 +14,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -147,11 +148,15 @@
     .admin-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px;
     }
-    
-    .btn-add-user {
-        width: 100%;
+
+    .admin-header h1 {
+        font-size: 1.8rem !important;
+    }
+
+    .search-paper {
+        padding: 16px;
     }
 
     .search-fields-container {

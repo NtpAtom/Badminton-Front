@@ -14,6 +14,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -194,18 +195,33 @@
 }
 
 @media (max-width: 900px) {
+    .manage-branch-container {
+        padding: 16px;
+    }
+
     .admin-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 20px;
+        gap: 16px;
+        padding-bottom: 16px;
     }
-    
+
+    .admin-header-text h1 {
+        font-size: 1.8rem !important;
+    }
+
     .btn-add-branch {
         width: 100%;
+        padding: 10px !important;
     }
 
     .search-fields-container {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
+    }
+
+    .search-input-group {
+        width: 100%;
     }
 }

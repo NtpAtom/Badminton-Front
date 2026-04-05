@@ -107,7 +107,7 @@ function historyBookingPage() {
         { id: 'index', label: 'No.', minWidth: 40, format: (value, row, index) => page * rowsPerPage + index + 1 }, {
             id: 'created_at',
             label: 'วันเวลาที่จอง',
-            align: 'right',
+
             minWidth: 140,
             format: (value) => value
                 ? new Date(value).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })

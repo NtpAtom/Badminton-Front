@@ -17,6 +17,8 @@ import {
   Menu,
   MenuItem,
   Drawer,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
 // ดึงไอคอนมาใช้ (ของ MUI)
@@ -41,6 +43,10 @@ export default function UserLayout() {
   // 3. ดึงข้อมูล User ตอนล็อกอินมาจาก Zustand Store ของเรา
   const user = useLogin((state) => state.user) || { user_name: "User" };
   const logout = useLogin((state) => state.logout);
+
+  // 4. จัดการ Responsive - ใช้ MUI Theme และ MediaQuery
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); // เช็คว่าเป็นหน้าจอเล็ก (ต่ำกว่า 900px) หรือไม่
 
   // === ฟังก์ชันการทำงานต่างๆ ===
 
@@ -133,13 +139,14 @@ export default function UserLayout() {
 
       {/* ================= 2. Sidebar (แถบเมนูด้านข้าง) ================= */}
       <Drawer
-        variant="persistent" // persistent ย่อหดได้ โดยมันดันเนื้อหาคอนเทนต์ให้ขยับตามได้
-        open={isSidebarOpen} // รับค่า state จากบรรทัด 24 (true/false)
+        variant={isMobile ? "temporary" : "persistent"} // ถ้าเป็นมือถือให้ใช้ temporary (เปิดทับ), ถ้าจอใหญ่ใช้ persistent
+        open={isSidebarOpen}
+        onClose={toggleSidebar} // สำหรับโหมด temporary ต้องมีฟังก์ชันปิดเมื่อกดข้างนอก
         sx={{
-          width: isSidebarOpen ? drawerWidth : 0,
+          width: drawerWidth, // ให้ความกว้างคงที่
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: drawerWidth, // ความกว้างเท่าที่เรากำหนดไว้
+            width: drawerWidth,
             boxSizing: "border-box",
             backgroundColor: "#ffffff",
             borderRight: "1px solid #f0f0f0",
@@ -225,13 +232,10 @@ export default function UserLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          height: { xs: "100vh", md: "auto" },
-          display: { xs: "flex", md: "block" },
-          flexDirection: "column",
-          overflow: { xs: "hidden", md: "visible" },
+          width: "100%", // ให้เต็มความกว้างเสมอ
           transition: "margin 0.3s ease",
-          p: { xs: 2, md: 3 },
-          position: "relative",
+          p: { xs: 1.5, sm: 2, md: 3 }, // ลด padding ในมือถือ
+          marginLeft: !isMobile && isSidebarOpen ? 0 : 0, // ไม่ต้องเลื่อน margin เพราะ drawer จัดการให้ หรือปรับแต่งตามต้องการ
         }}
       >
         <Toolbar /> {/* สร้างช่องว่างให้เนื้อหาไม่ชนแถบ Navbar ข้างบนสุด */}
