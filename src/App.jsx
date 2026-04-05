@@ -13,6 +13,8 @@ import CourtPage from "./page/admin/manageCourt/courtLivePage";
 import ManageUserPage from "./page/admin/manageUser/manageUserPage";
 import ManageBranchPage from "./page/admin/manageBranch/manageBranchPage";
 import HistoryBookingAdmin from "./page/admin/historybooking/historyBookingAdmin";
+import DashboardPage from "./page/admin/dashboard/DashboardPage";
+
 
 function App() {
   return (
@@ -61,7 +63,8 @@ function App() {
           <Route path="manageUser" element={<ManageUserPage />} />
           <Route path="manageBranch" element={<ManageBranchPage />} />
           <Route path="history-bookings" element={<HistoryBookingAdmin />} />
-          <Route path="dashboard" element={<div style={{ padding: '20px' }}><h1>Admin Dashboard</h1></div>} />
+          <Route path="dashboard" element={<DashboardPage />} />
+
         </Route>
       </Routes>
     </>

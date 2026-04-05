@@ -1,0 +1,224 @@
+:root {
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --danger-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+.dashboard-container {
+  padding: 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: radial-gradient(circle at 0% 0%, #f1f5f9 0%, #f8fafc 100%);
+  min-height: 100vh;
+}
+
+/* Header & Title */
+.dashboard-header {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.04em;
+  background: linear-gradient(to right, #1e293b, #64748b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Filter Bar - Modern Sticky */
+.filter-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 40px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  transition: all 0.3s ease;
+}
+
+.filter-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* Premium KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  margin-bottom: 40px;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid #f1f5f9;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 120px;
+  height: 120px;
+  background: var(--card-color, #6366f1);
+  opacity: 0.03;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.kpi-label {
+  color: #64748b;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.kpi-value {
+  font-size: 2.75rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.kpi-growth {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-top: 16px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  width: fit-content;
+}
+
+.growth-up {
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+}
+
+.growth-down {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+
+/* Modern Stats Table */
+.branch-stats-table {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.branch-stats-table th {
+  font-size: 0.875rem;
+  color: #64748b;
+  padding: 20px 24px;
+  background: #f8fafc;
+}
+
+.branch-stats-table td {
+  padding: 18px 24px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.chart-card {
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid #f1f5f9;
+  transition: border-color 0.3s ease;
+}
+
+.chart-card:hover {
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.chart-card.full-width {
+  grid-column: span 2;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chart-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: #6366f1;
+  border-radius: 4px;
+}
+
+/* Custom Tooltip */
+.recharts-custom-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 18px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-container {
+    padding: 20px;
+  }
+  .dashboard-title {
+    font-size: 1.75rem;
+  }
+  .kpi-value {
+    font-size: 2rem;
+  }
+}
