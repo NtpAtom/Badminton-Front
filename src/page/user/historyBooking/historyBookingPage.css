@@ -149,6 +149,12 @@
     border: 1px solid #d1eed1;
 }
 
+.status-cancelled {
+    background-color: #fdecea;
+    color: #c62828;
+    border: 1px solid #f5c2c0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
     .search-fields-container {

@@ -27,12 +27,12 @@ import './historyBookingAdmin.css'
 function HistoryBookingAdmin() {
     const { user, token } = useLogin()
     const { setIsLoading } = useLoading()
-    
+
     const [rows, setRows] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    
+
     // Filters
     const [userName, setUserName] = useState('');
     const [branchId, setBranchId] = useState('');
@@ -110,44 +110,57 @@ function HistoryBookingAdmin() {
     const columns = [
         { id: 'index', label: 'No.', minWidth: 40, format: (value, row, index) => page * rowsPerPage + index + 1 },
         { id: 'user_name', label: 'ผู้จอง (User)', minWidth: 140, format: (value) => <strong>{value}</strong> },
+        {
+            id: 'created_at',
+            label: 'วันเวลาที่จอง',
+
+            minWidth: 140,
+            format: (value) => value
+                ? new Date(value).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })
+                : '-'
+        },
         { id: 'branch_name', label: 'สาขา (Branch)', minWidth: 120 },
         { id: 'court_name', label: 'สนาม (Court)', minWidth: 100 },
-        { 
-            id: 'booking_date', 
-            label: 'วันที่ (Date)', 
-            minWidth: 100, 
-            format: (value) => new Date(value).toLocaleDateString('th-TH') 
+        {
+            id: 'booking_date',
+            label: 'วันที่ (Date)',
+            minWidth: 100,
+            format: (value) => new Date(value).toLocaleDateString('th-TH')
         },
-        { 
-            id: 'start_time', 
-            label: 'เริ่ม', 
-            minWidth: 70, 
-            format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span> 
+        {
+            id: 'start_time',
+            label: 'เริ่ม',
+            minWidth: 70,
+            format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span>
         },
-        { 
-            id: 'end_time', 
-            label: 'สิ้นสุด', 
-            minWidth: 70, 
-            format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span> 
+        {
+            id: 'end_time',
+            label: 'สิ้นสุด',
+            minWidth: 70,
+            format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span>
         },
         { id: 'duration_hours', label: 'ชม.', align: 'right', minWidth: 60 },
-        { 
-            id: 'total_price', 
-            label: 'ราคารวม', 
-            align: 'right', 
-            minWidth: 100, 
-            format: (value) => <strong>{parseFloat(value).toLocaleString()} ฿</strong> 
+        {
+            id: 'total_price',
+            label: 'ราคารวม',
+            align: 'right',
+            minWidth: 100,
+            format: (value) => <strong>{parseFloat(value).toLocaleString()} ฿</strong>
         },
-        { 
-            id: 'status', 
-            label: 'สถานะ', 
-            minWidth: 100, 
-            format: (value, row) => (
-                <Box className={`status-badge ${value === 'Pending' ? 'status-pending' : (row.remake === 'Cancelled' ? 'status-cancelled' : 'status-confirmed')}`}>
-                    {row.remake === 'Cancelled' ? 'Cancelled' : value}
-                </Box>
-            )
+        {
+            id: 'status',
+            label: 'สถานะ',
+            minWidth: 110,
+            align: 'center',
+            format: (value) => {
+                let cls = 'status-pending';
+                if (value === 'Cancelled') cls = 'status-cancelled';
+                else if (value === 'Confirmed') cls = 'status-confirmed';
+                return <Box className={`status-badge ${cls}`}>{value}</Box>;
+            }
         },
+        { id: 'remake', label: 'หมายเหตุ', minWidth: 100 },
+
     ];
 
     return (
@@ -166,7 +179,7 @@ function HistoryBookingAdmin() {
                         ตัวกรองข้อมูล
                     </Typography>
                 </Box>
-                
+
                 <Box className="search-fields-container">
                     <Box className="search-input-group flex-2">
                         <Typography variant="caption" className="search-label">ชื่อผู้จอง</Typography>
@@ -236,10 +249,10 @@ function HistoryBookingAdmin() {
                             ค้นหา
                         </Button>
                         <Tooltip title="ล้างการกรอง">
-                            <IconButton 
+                            <IconButton
                                 onClick={handleClearFilters}
-                                sx={{ 
-                                    backgroundColor: '#f5f5f5', 
+                                sx={{
+                                    backgroundColor: '#f5f5f5',
                                     '&:hover': { backgroundColor: '#eeeeee' }
                                 }}
                             >
