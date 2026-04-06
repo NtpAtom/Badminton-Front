@@ -127,7 +127,7 @@ function historyBookingPage() {
             minWidth: 110,
             format: (value) => {
                 let cls = 'status-pending';
-                if (value === 'Confirmed') cls = 'status-confirmed';
+                if (value === 'Completed') cls = 'status-completed';
                 else if (value === 'Cancelled') cls = 'status-cancelled';
                 return <Box className={`status-badge ${cls}`}>{value}</Box>;
             }

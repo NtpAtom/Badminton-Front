@@ -153,10 +153,10 @@
     border: 1px solid #ffe2bc;
 }
 
-.status-confirmed {
+.status-completed {
     background-color: #edf7ed;
     color: #2e7d32;
-    border: 1px solid #d1eed1;
+    border: 1px solid #a5d6a7;
 }
 
 .status-cancelled {

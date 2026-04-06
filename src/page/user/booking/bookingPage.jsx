@@ -129,15 +129,26 @@ export default function BookingPage() {
   };
 
   // ────────────────────────────────────────────────
-  // Step 2a: จ่ายเงินสำเร็จ (Webhook จะอัปเดต DB)
+  // Step 2a: จ่ายเงินสำเร็จ → เรียก API เปลี่ยน status เป็น Confirmed ทันที
   // ────────────────────────────────────────────────
-  const hdlPaymentSuccess = () => {
-    setPaymentModalOpen(false);
-    setClientSecret(null);
-    setPaymentIntentId(null);
-    setCurrentBookingId(null);
-    alert("✅ ชำระเงินสำเร็จ! การจองของคุณได้รับการยืนยันแล้ว");
-    fetchAvailableCourts(); // refresh สนามว่าง
+  const hdlPaymentSuccess = async () => {
+    try {
+      // ⚡ เรียก Backend เปลี่ยน status เป็น Confirmed ทันที
+      await axios.post(`${API}/stripe/confirm-booking`, {
+        booking_id: currentBookingId,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error("เปลี่ยน status ไม่สำเร็จ:", err);
+    } finally {
+      setPaymentModalOpen(false);
+      setClientSecret(null);
+      setPaymentIntentId(null);
+      setCurrentBookingId(null);
+      alert("✅ ชำระเงินสำเร็จ! การจองของคุณได้รับการยืนยันแล้ว");
+      fetchAvailableCourts(); // refresh สนามว่าง
+    }
   };
 
   // ────────────────────────────────────────────────
