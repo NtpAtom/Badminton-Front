@@ -40,6 +40,7 @@ function historyBookingPage() {
 
             const data = res.data.data;
             const count = res.data.total || 0;
+            console.log(data);
 
             setTimeout(() => {
                 setRows(data);
@@ -65,7 +66,7 @@ function historyBookingPage() {
     const handleClearAndFetch = () => {
         setStartDate('');
         setEndDate('');
-        
+
         const fetchCleared = async () => {
             setIsLoading(true)
             try {
@@ -103,25 +104,36 @@ function historyBookingPage() {
     };
 
     const columns = [
-        { id: 'index', label: 'No.', minWidth: 40, format: (value, row, index) => page * rowsPerPage + index + 1 },
+        { id: 'index', label: 'No.', minWidth: 40, format: (value, row, index) => page * rowsPerPage + index + 1 }, {
+            id: 'created_at',
+            label: 'วันเวลาที่จอง',
+
+            minWidth: 140,
+            format: (value) => value
+                ? new Date(value).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })
+                : '-'
+        },
         { id: 'branch_name', label: 'สาขา (Branch)', minWidth: 120, format: (value) => <strong>{value}</strong> },
         { id: 'court_name', label: 'สนาม (Court)', minWidth: 100 },
-        { id: 'booking_date', label: 'วันที่ (Date)', align: 'right', minWidth: 100, format: (value) => new Date(value).toLocaleDateString() },
+        { id: 'booking_date', label: 'วันที่จอง', align: 'right', minWidth: 110, format: (value) => new Date(value).toLocaleDateString('th-TH') },
         { id: 'start_time', label: 'เริ่ม', align: 'right', minWidth: 70, format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span> },
         { id: 'end_time', label: 'สิ้นสุด', align: 'right', minWidth: 70, format: (value) => <span style={{ color: '#1976d2', fontWeight: 600 }}>{value}</span> },
         { id: 'duration_hours', label: 'ชั่วโมง', align: 'right', minWidth: 70 },
-        { id: 'total_price', label: 'ราคารวม', align: 'right', minWidth: 100, format: (value) => <strong>{value} บาท</strong> },
-        { 
-            id: 'status', 
-            label: 'สถานะ', 
-            align: 'right', 
-            minWidth: 100, 
-            format: (value) => (
-                <Box className={`status-badge ${value === 'Pending' ? 'status-pending' : 'status-confirmed'}`}>
-                    {value}
-                </Box>
-            )
+        { id: 'total_price', label: 'ราคารวม', align: 'right', minWidth: 100, format: (value) => <strong>{parseFloat(value).toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท</strong> },
+        {
+            id: 'status',
+            label: 'สถานะ',
+            align: 'center',
+            minWidth: 110,
+            format: (value) => {
+                let cls = 'status-pending';
+                if (value === 'Completed') cls = 'status-completed';
+                else if (value === 'Cancelled') cls = 'status-cancelled';
+                return <Box className={`status-badge ${cls}`}>{value}</Box>;
+            }
         },
+        { id: 'remake', label: 'หมายเหตุ', minWidth: 100 },
+
     ];
 
     return (

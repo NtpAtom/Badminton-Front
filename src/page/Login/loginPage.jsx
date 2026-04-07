@@ -47,7 +47,13 @@ function LoginPage() {
       const res = await axios.post(API_URL, { user_email, user_password });
       setLogin(res.data.token, res.data.user);
       setIsLoading(false);
-      navigate('/user/booking');
+      
+      // Redirect based on role
+      if (res.data.user.user_role === 'admin') {
+        navigate('/admin/courts');
+      } else {
+        navigate('/user/booking');
+      }
     } catch (err) {
       console.log(err);
       const msg = err.response?.data?.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ";
