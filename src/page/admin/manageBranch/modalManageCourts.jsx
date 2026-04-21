@@ -31,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 
 const ModalManageCourts = ({ open, handleClose, branch }) => {
     const { token } = useLogin();
@@ -57,7 +58,7 @@ const ModalManageCourts = ({ open, handleClose, branch }) => {
         if (!branch) return;
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:3000/api/court?branch_id=${branch.branch_id}`, {
+            const response = await axios.get(`${API_URL}/court?branch_id=${branch.branch_id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setCourts(response.data.data || response.data);
@@ -77,7 +78,7 @@ const ModalManageCourts = ({ open, handleClose, branch }) => {
     const handleSingleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/court/addCourt', {
+            await axios.post(`${API_URL}/court/addCourt`, {
                 ...singleCourt,
                 branch_id: branch.branch_id
             }, {
@@ -98,7 +99,7 @@ const ModalManageCourts = ({ open, handleClose, branch }) => {
             for (let i = 0; i < bulkCourts.count; i++) {
                 const courtNum = parseInt(bulkCourts.start_number) + i;
                 promises.push(
-                    axios.post('http://localhost:3000/api/court/addCourt', {
+                    axios.post(`${API_URL}/court/addCourt`, {
                         court_name: `${bulkCourts.prefix} ${courtNum}`,
                         price_per_hour: bulkCourts.price_per_hour,
                         status: 'available',
@@ -122,7 +123,7 @@ const ModalManageCourts = ({ open, handleClose, branch }) => {
     const handleDeleteCourt = async (court_id) => {
         if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสนามนี้?')) {
             try {
-                await axios.delete(`http://localhost:3000/api/court/delete/${court_id}`, {
+                await axios.delete(`${API_URL}/court/delete/${court_id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 fetchCourts();

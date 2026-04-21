@@ -7,6 +7,7 @@ import { useLoading } from "../../store/loadingStore";
 import axios from "axios";
 import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import API_URL from "../../config/api";
 
 
 function LoginPage() {
@@ -43,8 +44,7 @@ function LoginPage() {
 
     setIsLoading(true);
     try {
-      const API_URL = 'http://localhost:3000/api/user/login';
-      const res = await axios.post(API_URL, { user_email, user_password });
+      const res = await axios.post(`${API_URL}/user/login`, { user_email, user_password });
       setLogin(res.data.token, res.data.user);
       setIsLoading(false);
       

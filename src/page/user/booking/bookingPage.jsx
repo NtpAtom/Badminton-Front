@@ -8,8 +8,9 @@ import "./bookingPage.css";
 import axios from "axios";
 import { useLogin } from "../../../store/loginStore";
 import { useLoading } from "../../../store/loadingStore";
+import API_URL from "../../../config/api";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API = API_URL;
 
 export default function BookingPage() {
   const { user, token } = useLogin();

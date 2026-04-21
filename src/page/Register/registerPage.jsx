@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
-import { useLoading } from "../../store/loadingStore";
+import API_URL from "../../config/api";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -47,8 +47,7 @@ function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const API_URL = "http://localhost:3000/api/user/register"
-      await axios.post(API_URL, formData)
+      await axios.post(`${API_URL}/user/register`, formData)
       setIsLoading(false);
       navigate('/login');
 

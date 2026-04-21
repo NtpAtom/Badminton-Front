@@ -6,6 +6,7 @@ import ModalAddEditUser from './modalAddEditUser';
 import './manageUserPage.css';
 import axios from 'axios';
 import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 
 
 function manageUserPage() {
@@ -20,7 +21,7 @@ function manageUserPage() {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/user', {
+            const response = await axios.get(`${API_URL}/user`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: page + 1,
@@ -64,7 +65,7 @@ function manageUserPage() {
     const handleDeleteClick = async (user_id) => {
         if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้งานนี้?')) {
             try {
-                await axios.delete(`http://localhost:3000/api/user/delete/${user_id}`, {
+                await axios.delete(`${API_URL}/user/delete/${user_id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert('ลบผู้ใช้งานเรียบร้อยแล้ว');
