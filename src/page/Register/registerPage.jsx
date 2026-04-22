@@ -6,7 +6,7 @@ import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
 import API_URL from "../../config/api";
-
+import { useLoading } from "../../store/loadingStore";
 function RegisterPage() {
   const navigate = useNavigate();
   const { setIsLoading, isLoading } = useLoading();
