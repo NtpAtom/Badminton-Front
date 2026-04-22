@@ -50,6 +50,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
@@ -97,7 +98,7 @@ const DashboardPage = () => {
 
     const fetchBranches = async () => {
         try {
-            const res = await axios.get('http://localhost:3000/api/branch', {
+            const res = await axios.get(`${API_URL}/branch`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setBranches(res.data.data);
@@ -109,7 +110,7 @@ const DashboardPage = () => {
     const fetchStats = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:3000/api/dashboard/stats', {
+            const res = await axios.get(`${API_URL}/dashboard/stats`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     startDate: filters.startDate,

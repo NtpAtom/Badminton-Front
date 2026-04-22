@@ -5,6 +5,7 @@ import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import { useLogin } from '../../store/loginStore';
+import API_URL from '../../config/api';
 import './profilePage.css';
 
 import axios from 'axios';
@@ -24,7 +25,7 @@ const ProfilePage = () => {
 
     const fetchUser = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/api/user/" + user.user_id, {
+            const res = await axios.get(`${API_URL}/user/${user.user_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -71,7 +72,7 @@ const ProfilePage = () => {
                 old_password: null
             };
 
-            const res = await axios.put("http://localhost:3000/api/user/update/" + user.user_id,
+            const res = await axios.put(`${API_URL}/user/update/${user.user_id}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -109,7 +110,7 @@ const ProfilePage = () => {
                 old_password: formData.old_password
             };
 
-            const res = await axios.put("http://localhost:3000/api/user/update/" + user.user_id,
+            const res = await axios.put(`${API_URL}/user/update/${user.user_id}`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

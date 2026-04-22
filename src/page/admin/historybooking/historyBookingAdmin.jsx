@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLogin } from "../../../store/loginStore";
 import { useLoading } from "../../../store/loadingStore";
+import API_URL from '../../../config/api';
 import {
     Box,
     TextField,
@@ -43,7 +44,7 @@ function HistoryBookingAdmin() {
     const fetchBranches = async () => {
         if (user?.user_role !== 'super admin') return;
         try {
-            const res = await axios.get("http://localhost:3000/api/branch", {
+            const res = await axios.get(`${API_URL}/branch`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setBranches(res.data.data || []);
@@ -55,7 +56,7 @@ function HistoryBookingAdmin() {
     const fetchHistoryBooking = async () => {
         setIsLoading(true)
         try {
-            const res = await axios.get("http://localhost:3000/api/booking/admin/history", {
+            const res = await axios.get(`${API_URL}/booking/admin/history`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: page + 1,

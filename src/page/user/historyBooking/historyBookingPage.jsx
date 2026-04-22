@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLogin } from "../../../store/loginStore";
 import { useLoading } from "../../../store/loadingStore";
+import API_URL from '../../../config/api';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -28,7 +29,7 @@ function historyBookingPage() {
     const fetchHistoryBooking = async () => {
         setIsLoading(true)
         try {
-            const res = await axios.get("http://localhost:3000/api/booking", {
+            const res = await axios.get(`${API_URL}/booking`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: {
                     page: page + 1,
@@ -70,7 +71,7 @@ function historyBookingPage() {
         const fetchCleared = async () => {
             setIsLoading(true)
             try {
-                const res = await axios.get("http://localhost:3000/api/booking", {
+                const res = await axios.get(`${API_URL}/booking`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: {
                         page: page + 1,

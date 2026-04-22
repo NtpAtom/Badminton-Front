@@ -19,6 +19,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 
 const ModalAddEditBranch = ({ open, handleClose, branch }) => {
     const { token } = useLogin();
@@ -65,13 +66,13 @@ const ModalAddEditBranch = ({ open, handleClose, branch }) => {
         try {
             if (branch) {
                 // Update
-                await axios.put(`http://localhost:3000/api/branch/update/${branch.branch_id}`, formData, {
+                await axios.put(`${API_URL}/branch/update/${branch.branch_id}`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert('แก้ไขข้อมูลสาขาเรียบร้อยแล้ว');
             } else {
                 // Add
-                await axios.post('http://localhost:3000/api/branch/add', formData, {
+                await axios.post(`${API_URL}/branch/add`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert('เพิ่มสาขาใหม่เรียบร้อยแล้ว');

@@ -13,6 +13,7 @@ import ModalManageCourts from './modalManageCourts';
 import './manageBranchPage.css';
 import axios from 'axios';
 import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 
 function manageBranchPage() {
     const [rows, setRows] = useState([]);
@@ -29,7 +30,7 @@ function manageBranchPage() {
         try {
             // Updated to use search and pagination if backend supports it
             // Based on branchController, it currently returns all
-            const response = await axios.get('http://localhost:3000/api/branch', {
+            const response = await axios.get(`${API_URL}/branch`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -84,7 +85,7 @@ function manageBranchPage() {
     const handleDeleteBranchClick = async (branch_id) => {
         if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสาขานี้? การลบสาขาจะทำให้ข้อมูลสนามทั้งหมดในสาขานี้ถูกลบไปด้วย')) {
             try {
-                await axios.delete(`http://localhost:3000/api/branch/delete/${branch_id}`, {
+                await axios.delete(`${API_URL}/branch/delete/${branch_id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 alert('ลบสาขาเรียบร้อยแล้ว');

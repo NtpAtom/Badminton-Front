@@ -3,8 +3,9 @@ import "./courtLivePage.css";
 import ModalCourtLive from "../modalCourtLive";
 import axios from "axios";
 import { useLogin } from "../../../store/loginStore";
+import API_URL from "../../../config/api";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = API_URL;
 
 const START_HOUR = 8; // เวลาเริ่มให้บริการ (8 โมงเช้า)
 const END_HOUR = 24;   // เวลาปิดให้บริการ (เที่ยงคืน)
