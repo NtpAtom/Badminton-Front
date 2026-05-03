@@ -14,44 +14,35 @@ import {
     MenuItem,
     Typography,
     Divider,
-    IconButton
+    IconButton,
+    Alert,
+    Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PersonIcon from '@mui/icons-material/Person';
+import axios from 'axios';
+import { useLogin } from '../../../store/loginStore';
+import API_URL from '../../../config/api';
 
 const ModalAddEditUser = ({ open, handleClose, user }) => {
+    const { user: currentUser, token } = useLogin();
+    const isSuperAdmin = currentUser?.user_role === 'super admin';
+
     const [formData, setFormData] = useState({
-        user_name: '',
-        user_email: '',
-        user_password: '',
-        user_phone: '',
         user_role: 'user',
         is_active: true,
-        branch_id: ''
     });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (open) {
-            if (user) {
-                setFormData({
-                    user_name: user.user_name || '',
-                    user_email: user.user_email || '',
-                    user_password: '',
-                    user_phone: user.user_phone || '',
-                    user_role: user.user_role || 'user',
-                    is_active: user.is_active ?? true,
-                    branch_id: user.branch_id || ''
-                });
-            } else {
-                setFormData({
-                    user_name: '',
-                    user_email: '',
-                    user_password: '',
-                    user_phone: '',
-                    user_role: 'user',
-                    is_active: true,
-                    branch_id: ''
-                });
-            }
+        if (open && user) {
+            setFormData({
+                user_role: user.user_role || 'user',
+                is_active: user.is_active ?? true,
+            });
+            setError('');
         }
     }, [user, open]);
 
@@ -63,11 +54,37 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form Submitted UI Only:', formData);
-        handleClose();
+        setLoading(true);
+        setError('');
+        try {
+            // Super admin ใช้ route /role/:user_id เพื่อเปลี่ยน role + status
+            await axios.put(
+                `${API_URL}/user/role/${user.user_id}`,
+                {
+                    user_role: formData.user_role,
+                    is_active: formData.is_active,
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            handleClose();
+        } catch (err) {
+            setError(err.response?.data?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+        } finally {
+            setLoading(false);
+        }
     };
+
+    if (!user) return null;
+
+    const roleDisplay = {
+        user: { label: 'ลูกค้า (User)', color: '#4caf50', icon: <PersonIcon fontSize="small" /> },
+        admin: { label: 'ผู้จัดการ (Admin)', color: '#1976d2', icon: <AdminPanelSettingsIcon fontSize="small" /> },
+        'super admin': { label: 'ผู้ดูแลระบบ (Super Admin)', color: '#9c27b0', icon: <AdminPanelSettingsIcon fontSize="small" /> },
+    };
+
+    const currentRoleInfo = roleDisplay[user.user_role] || roleDisplay['user'];
 
     return (
         <Dialog
@@ -78,17 +95,17 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
             PaperProps={{
                 sx: {
                     borderRadius: 4,
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.12)'
                 }
             }}
         >
             <DialogTitle sx={{ m: 0, p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
                     <Typography variant="h5" sx={{ fontWeight: 700, color: '#1a1a1a' }}>
-                        {user ? 'แก้ไขข้อมูลผู้ใช้งาน' : 'เพิ่มผู้ใช้งานใหม่'}
+                        จัดการสิทธิ์ผู้ใช้งาน
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        กรุณากรอกข้อมูลส่วนตัวของผู้ใช้งานให้ครบถ้วน
+                        ปรับบทบาทและสถานะของผู้ใช้งาน
                     </Typography>
                 </Box>
                 <IconButton
@@ -102,74 +119,96 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
+
             <form onSubmit={handleSubmit}>
                 <Divider />
                 <DialogContent sx={{ p: 4 }}>
+                    {/* ข้อมูลผู้ใช้ที่กำลังแก้ไข (read-only) */}
+                    <Box sx={{
+                        p: 2.5,
+                        mb: 3,
+                        borderRadius: 3,
+                        bgcolor: '#f8f9fa',
+                        border: '1px solid #e9ecef'
+                    }}>
+                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                            ข้อมูลผู้ใช้
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                            {user.user_name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {user.user_email}
+                        </Typography>
+                        <Box sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" color="text.secondary">บทบาทปัจจุบัน:</Typography>
+                            <Chip
+                                label={currentRoleInfo.label}
+                                size="small"
+                                icon={currentRoleInfo.icon}
+                                sx={{
+                                    bgcolor: currentRoleInfo.color + '20',
+                                    color: currentRoleInfo.color,
+                                    fontWeight: 600,
+                                    border: `1px solid ${currentRoleInfo.color}40`
+                                }}
+                            />
+                        </Box>
+                        <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                💡 หากต้องการเปลี่ยนรหัสผ่าน ผู้ใช้สามารถทำได้ที่หน้า
+                                <strong> โปรไฟล์</strong> ของตนเอง
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {error && (
+                        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
+                            {error}
+                        </Alert>
+                    )}
+
                     <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="ชื่อ-นามสกุล"
-                                name="user_name"
-                                value={formData.user_name}
-                                onChange={handleChange}
-                                fullWidth
-                                required
-                                placeholder="เช่น นายสมชาย ใจดี"
-                                InputProps={{ sx: { borderRadius: 3 } }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="อีเมล"
-                                name="user_email"
-                                type="email"
-                                value={formData.user_email}
-                                onChange={handleChange}
-                                fullWidth
-                                required
-                                placeholder="example@mail.com"
-                                InputProps={{ sx: { borderRadius: 3 } }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label={user ? "รหัสผ่านใหม่" : "รหัสผ่าน"}
-                                name="user_password"
-                                type="password"
-                                value={formData.user_password}
-                                onChange={handleChange}
-                                fullWidth
-                                required={!user}
-                                helperText={user ? "ปล่อยว่างหากไม่ต้องการเปลี่ยน" : ""}
-                                InputProps={{ sx: { borderRadius: 3 } }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                label="เบอร์โทรศัพท์"
-                                name="user_phone"
-                                value={formData.user_phone}
-                                onChange={handleChange}
-                                fullWidth
-                                placeholder="08XXXXXXXX"
-                                InputProps={{ sx: { borderRadius: 3 } }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>บทบาท (Role)</InputLabel>
-                                <Select
-                                    name="user_role"
-                                    value={formData.user_role}
-                                    label="บทบาท (Role)"
-                                    onChange={handleChange}
-                                    sx={{ borderRadius: 3 }}
-                                >
-                                    <MenuItem value="user">User (ลูกค้า)</MenuItem>
-                                    <MenuItem value="admin">Admin (ผู้ดูเแล)</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                        {/* Super admin เปลี่ยน role ได้ */}
+                        {isSuperAdmin && (
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel>บทบาท (Role)</InputLabel>
+                                    <Select
+                                        name="user_role"
+                                        value={formData.user_role}
+                                        label="บทบาท (Role)"
+                                        onChange={handleChange}
+                                        sx={{ borderRadius: 3 }}
+                                    >
+                                        <MenuItem value="user">
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <PersonIcon fontSize="small" sx={{ color: '#4caf50' }} />
+                                                User (ลูกค้า)
+                                            </Box>
+                                        </MenuItem>
+                                        <MenuItem value="admin">
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <AdminPanelSettingsIcon fontSize="small" sx={{ color: '#1976d2' }} />
+                                                Admin (ผู้จัดการ)
+                                            </Box>
+                                        </MenuItem>
+                                    </Select>
+                                </FormControl>
+                                {formData.user_role === 'admin' && user.user_role === 'user' && (
+                                    <Alert severity="info" sx={{ mt: 1.5, borderRadius: 2 }} icon={<AdminPanelSettingsIcon />}>
+                                        ผู้ใช้นี้จะได้รับสิทธิ์ <strong>Admin</strong> — สามารถเข้าถึงหน้าจัดการระบบได้
+                                    </Alert>
+                                )}
+                                {formData.user_role === 'user' && user.user_role === 'admin' && (
+                                    <Alert severity="warning" sx={{ mt: 1.5, borderRadius: 2 }}>
+                                        สิทธิ์ Admin จะถูกลดลงเป็น <strong>User</strong>
+                                    </Alert>
+                                )}
+                            </Grid>
+                        )}
+
+                        {/* ทั้ง super admin และ admin เปลี่ยน is_active ได้ */}
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel>สถานะการใช้งาน</InputLabel>
@@ -180,18 +219,20 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
                                     onChange={handleChange}
                                     sx={{ borderRadius: 3 }}
                                 >
-                                    <MenuItem value={true}>เปิดใช้งาน (Active)</MenuItem>
-                                    <MenuItem value={false}>ปิดใช้งาน (Inactive)</MenuItem>
+                                    <MenuItem value={true}>✅ เปิดใช้งาน (Active)</MenuItem>
+                                    <MenuItem value={false}>🚫 ปิดใช้งาน (Inactive)</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                     </Grid>
                 </DialogContent>
+
                 <Divider />
                 <DialogActions sx={{ p: 3, px: 4, gap: 1.5 }}>
                     <Button
                         onClick={handleClose}
                         color="inherit"
+                        disabled={loading}
                         sx={{
                             borderRadius: 3,
                             px: 3,
@@ -204,6 +245,7 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
                     <Button
                         type="submit"
                         variant="contained"
+                        disabled={loading}
                         sx={{
                             borderRadius: 3,
                             px: 4,
@@ -215,7 +257,7 @@ const ModalAddEditUser = ({ open, handleClose, user }) => {
                             }
                         }}
                     >
-                        {user ? 'บันทึกการแก้ไข' : 'ยืนยันเพิ่มผู้ใช้งาน'}
+                        {loading ? 'กำลังบันทึก...' : 'บันทึกการแก้ไข'}
                     </Button>
                 </DialogActions>
             </form>

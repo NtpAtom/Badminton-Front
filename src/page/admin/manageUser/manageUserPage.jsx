@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField, Typography, Paper, Stack, IconButton, Tooltip } from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Box, TextField, Typography, Paper, Stack, IconButton, Tooltip } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon, Search as SearchIcon } from '@mui/icons-material';
 import { DataTable } from '../../../components';
 import ModalAddEditUser from './modalAddEditUser';
 import './manageUserPage.css';
@@ -50,11 +50,6 @@ function manageUserPage() {
         setSearchQuery(e.target.value);
         setPage(0);
         if (page === 0) fetchUser();
-    };
-
-    const handleAddClick = () => {
-        setSelectedUser(null);
-        setIsModalOpen(true);
     };
 
     const handleEditClick = (user) => {
@@ -120,16 +115,23 @@ function manageUserPage() {
             align: 'right',
             format: (_, row) => (
                 <Stack direction="row" spacing={1} justifyContent="flex-end">
-                    <Tooltip title="แก้ไข">
-                        <IconButton size="small" onClick={() => handleEditClick(row)} className="btn-edit">
-                            <EditIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="ลบ">
-                        <IconButton size="small" onClick={() => handleDeleteClick(row.user_id)} className="btn-delete">
-                            <DeleteIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
+                    {user?.user_role === 'super admin' && (
+                        <>
+                            <Tooltip title="จัดการสิทธิ์">
+                                <IconButton size="small" onClick={() => handleEditClick(row)} className="btn-edit">
+                                    <EditIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="ลบ">
+                                <IconButton size="small" onClick={() => handleDeleteClick(row.user_id)} className="btn-delete">
+                                    <DeleteIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    )}
+                    {user?.user_role !== 'super admin' && (
+                        <Typography variant="caption" color="text.secondary">เรียกดูเท่านั้น</Typography>
+                    )}
                 </Stack>
             )
         }
@@ -140,18 +142,8 @@ function manageUserPage() {
             <Box className="admin-header">
                 <Box className="admin-header-text">
                     <h1>จัดการผู้ใช้งาน</h1>
-                    <p>ค้นหา เพิ่ม แก้ไข และลบข้อมูลผู้เข้าใช้งานในระบบ</p>
+                    <p>ค้นหา แก้ไขบทบาท และจัดการสถานะผู้เข้าใช้งานในระบบ</p>
                 </Box>
-                {user?.user_role === 'super admin' && (
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={handleAddClick}
-                        className="btn-add-user"
-                    >
-                        เพิ่มผู้ใช้งานใหม่
-                    </Button>
-                )}
             </Box>
 
             <Paper elevation={0} className="search-paper">
